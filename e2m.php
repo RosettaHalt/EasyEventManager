@@ -21,7 +21,7 @@ function admin_menu_easy_manage_event () {
 }
 
 //!< CSSの読み込み
-function wp_custom_admin_Lib() {
+function wp_custom_admin_css() {
 	?>
 	<style type="text/css">
 		.num_input{
@@ -30,21 +30,10 @@ function wp_custom_admin_Lib() {
 		.text_input{
 			width: 240px;
 		}
-		table td span{
-			display: none;
-		}
-		.dataTables_filter{
-			display: none;
-		}
 	</style>
 	<?php
-		$plugin_url = (is_ssl()) ? str_replace('http://','https://', WP_PLUGIN_URL) : WP_PLUGIN_URL;
-		$plugin_url .= "/EasyEventManager/";
-	?>
-	<script type="text/javascript" language="javascript" src="<?php echo $plugin_url; ?>js/script.js"></script>
-	<?php
 }
-add_action('admin_head', 'wp_custom_admin_Lib', 100);
+add_action('admin_head', 'wp_custom_admin_css', 100);
 
 
 //!< プラグインページのコンテンツを表示
@@ -60,7 +49,7 @@ function easy_manage_event () {
         	changeEvent();
         	deleteEvent();
 
-        	showDebugData();	// デバッグ用
+        	//showEventData();	// デバッグ用
         ?>
     </div>
 <?php
@@ -71,16 +60,15 @@ function easy_manage_event () {
 //!< 日付変更用の関数
 function changeEvent(){
 	global $plugin_db; ?>
-	<div class="update_event" id="update_event">
+	<div class="update_event">
 	<h3>内容の変更</h3>
-	<span id="prev">←</span>　<span id="page"></span>　<span id="next">→</span>
 	<form method="post" action="options.php">
 	    <?php
 	    	wp_nonce_field('update-options');
 			$total_event = getTotalEvent();
 			$event_data = getEventData();
 	    ?>
-	    <table class="widefat" id="changetable">
+	    <table class="widefat">
 	    <thead>
 	        <tr class="thead" valign="top">
 	            <th scope="row">No.</th>
@@ -94,7 +82,7 @@ function changeEvent(){
 	    </thead>
 	    <tbody>
 	    <?php
-		    for($i = $total_event-1; $i >= 0; $i--){
+		    for($i = 0; $i < $total_event; $i++){
 			    $year_value = $event_data["year"][$i];
 			    $month_value = $event_data["month"][$i];
 			    $days_value = $event_data["days"][$i];
@@ -103,23 +91,17 @@ function changeEvent(){
 			    $other_value = $event_data["other"][$i];
 		    ?>
 	        <tr class="thead" valign="top">
-	            <td scope="row"><?php echo addZero($i); ?> : </th>
-	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>year<?php echo $i; ?>" value="<?php echo $year_value; ?>" /><span><?php echo $year_value; ?></span>年</td>
-	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>month<?php echo $i; ?>" value="<?php echo $month_value; ?>" /><span><?php echo $month_value; ?></span>月</td>
-	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>days<?php echo $i; ?>" value="<?php echo $days_value; ?>" /><span><?php echo $days_value; ?></span>日</td>
-	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>title<?php echo $i; ?>" value="<?php echo $title_value; ?>" /><span><?php echo $title_value; ?></span></td>
-	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>url<?php echo $i; ?>" value="<?php echo $url_value; ?>" /><span><?php echo $url_value; ?></span></td>
-	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>other<?php echo $i; ?>" value="<?php echo $other_value; ?>" /><span><?php echo $other_value; ?></span></td>
+	            <td scope="row"><?php echo $i; ?> : </th>
+	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>year<?php echo $i; ?>" value="<?php echo $year_value; ?>" />年</td>
+	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>month<?php echo $i; ?>" value="<?php echo $month_value; ?>" />月</td>
+	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>days<?php echo $i; ?>" value="<?php echo $days_value; ?>" />日</td>
+	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>title<?php echo $i; ?>" value="<?php echo $title_value; ?>" /></td>
+	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>url<?php echo $i; ?>" value="<?php echo $url_value; ?>" /></td>
+	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>other<?php echo $i; ?>" value="<?php echo $other_value; ?>" /></td>
 	        </tr>
 	    <?php } ?>
 	    </tbody>
 	    </table>
-		<select id="foo" name="foo">
-			<option value="10">10</option>
-			<option value="25">25</option>
-			<option value="50">50</option>
-		</select>
-	    
 	    <input type="hidden" name="action" value="update" />
 	    <input type="hidden" name="<?php echo $plugin_db; ?>total_event" value="<?php echo $total_event; ?>" />
 	    <?php
@@ -311,7 +293,7 @@ function uninstall_hook_easy_manage_event () {
 }
 
 //!< 表示用関数
-function showDebugData() {
+function showEventData() {
 	global $plugin_db;
 	$total_event = getTotalEvent();
 	
@@ -375,11 +357,5 @@ function getEventData(){
     $event_data["other"] = array_merge($event_other);
     
     return $event_data;
-}
-function addZero($value){
-	if($value < 10){
-		$value = "0".$value;
-	}
-	return $value;
 }
 ?>
