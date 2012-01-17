@@ -44,20 +44,29 @@ Easy to manage events.
 > 後はカレンダーに組み込んだり、リスト形式で表示するなど自由に使うことができます。<br />
 
 > 今現在は
->> タイトル : $event_data["title"]<br />
->> URL: $event_data["url"]<br />
->> 年 : $event_data["year"]<br />
->> 月 : $event_data["month"]<br />
->> 日 : $event_data["days"]<br />
->> その他 : $event_data["other"]<br />
+>> タイトル :	$event_data["title"]<br />
+>> URL:		$event_data["url"]<br />
+>> 年 : 		$event_data["year"]<br />
+>> 月 : 		$event_data["month"]<br />
+>> 日 : 		$event_data["days"]<br />
+>> その他 : 	$event_data["other"]<br />
 
 > 以上の配列値を取得できます。<br />
+
+> デバックなどで配列の中身を見たい時は
 >> showDebugData();
 
-> を呼ぶと配列の中身をprint_r()で見ることが出来ます。<br />
+> を呼べば中身をprint_r()で表示することが出来ます。<br />
 
 > <br />
 > 今後のこと<br />
 > もうちょい管理画面見やすくします。<br />
 > イベント数が多くなると管理がしにくいと思うのでその辺りもなんとかしようとは思っています。<br />
-> 今はとりあえず動くもの、が必要でしたので。
+> 今はとりあえず動くものが必要でしたので。
+> ソースもとんでもねぇ酷さ。要改善。
+
+> 実装予定
+> 日付でのソート
+> ページナビ(検討中)
+> 追加、編集、削除をタブでの管理(検討中)
+> 独立したカテゴリ機能(検討中)
