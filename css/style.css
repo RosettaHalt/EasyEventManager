@@ -1,0 +1,29 @@
+.num_input{
+	width: 80px;
+}
+.text_input{
+	width: 240px;
+}
+table td span{
+	display: none;
+}
+.dataTables_filter{
+	display: none;
+}
+.update_event #prev,
+.update_event #next{
+	border: 1px solid #CCC;
+	padding: 3px 4px;
+	margin-right: 5px;
+}
+#prev,
+#next{
+	text-decoration: none;
+}
+#prev:hover,
+#next:hover{
+	text-decoration: underline;
+}
+#update_event th{
+	cursor: pointer;
+}

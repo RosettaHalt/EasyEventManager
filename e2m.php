@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Easy Event Manager
-Version: 0.4
+Version: 0.5
 Plugin URI: http://web.lugn-design.com
 Author: Rosetta
 Author URI: http://web.lugn-design.com
@@ -22,28 +22,28 @@ function admin_menu_easy_manage_event () {
 
 //!< CSSの読み込み
 function wp_custom_admin_Lib() {
-	?>
-	<style type="text/css">
-		.num_input{
-			width: 80px;
-		}
-		.text_input{
-			width: 240px;
-		}
-		table td span{
-			display: none;
-		}
-		.dataTables_filter{
-			display: none;
-		}
-	</style>
-	<?php
 		$plugin_url = (is_ssl()) ? str_replace('http://','https://', WP_PLUGIN_URL) : WP_PLUGIN_URL;
 		$plugin_url .= "/EasyEventManager/";
 	?>
+	<link type="text/css" href="<?php echo $plugin_url; ?>css/style.css" rel="stylesheet" />
 	<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-	<script type="text/javascript" language="javascript" src="<?php echo $plugin_url; ?>js/script.js"></script>
+	<script type="text/javascript" src="<?php echo $plugin_url; ?>js/script.js"></script>
+	<script type="text/javascript" src="<?php echo $plugin_url; ?>js/sort/jquery.tablesorter.js"></script> 
+	<script type="text/javascript">
+		var j = jQuery.noConflict();
+		j(function() {
+	    <?php 
+			$total_event = getTotalEvent();
+			
+    		for($i = 0; $i < $total_event; $i++){
+    			echo "j(\"#datepicker".$i."\").datepicker({dateFormat: 'yy/mm/dd'});\n";
+    		}
+		?>
+			j("#changetable").tablesorter({
+			});
+		}); 
+	</script>
 	<?php
 }
 add_action('admin_head', 'wp_custom_admin_Lib', 100);
@@ -75,55 +75,64 @@ function changeEvent(){
 	global $plugin_db; ?>
 	<div class="update_event" id="update_event">
 	<h3>内容の変更</h3>
-	<span id="prev">←</span>　<span id="page"></span>　<span id="next">→</span>
+	<a href="" id="prev">←</a>
+	<a href="" id="next">→</a>
+	<select id="foo" name="foo">
+		<option value="10" selected="selected">10</option>
+		<option value="25">25</option>
+		<option value="50">50</option>
+	</select>
 	<form method="post" action="options.php">
 	    <?php
 	    	wp_nonce_field('update-options');
 			$total_event = getTotalEvent();
-			$event_data = getEventData();
+			//$event_data = getEventData();
+			$sort_data = sortData();
 	    ?>
 	    <table class="widefat" id="changetable">
 	    <thead>
 	        <tr class="thead" valign="top">
 	            <th scope="row">No.</th>
+	            <th scope="row">日付</th>
+	            <!--
 	            <th scope="row">年</th>
 	            <th scope="row">月</th>
 	            <th scope="row">日</th>
+	            -->
 	            <th scope="row">タイトル</th>
 	            <th scope="row">URL</th>
 	            <th scope="row">その他</th>
-	            <th scope="row">pickr</th>
 	        </tr>
 	    </thead>
 	    <tbody>
 	    <?php
+	    
 		    for($i = $total_event-1; $i >= 0; $i--){
-			    $year_value = $event_data["year"][$i];
-			    $month_value = $event_data["month"][$i];
-			    $days_value = $event_data["days"][$i];
-			    $title_value = $event_data["title"][$i];
-			    $url_value = $event_data["url"][$i];
-			    $other_value = $event_data["other"][$i];
+		    	$data = $sort_data[$i];
+		    	
+			    $year_value = $data["year"];
+			    $month_value = $data["month"];
+			    $days_value = $data["days"];
+			    $title_value = $data["title"];
+			    $url_value = $data["url"];
+			    $other_value = $data["other"];
+			    $date_value = $data["date"];
 		    ?>
 	        <tr class="thead" valign="top">
 	            <td scope="row"><?php echo addZero($i); ?> : </th>
+	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>date<?php echo $i; ?>" value="<?php echo $date_value; ?>" id="datepicker<?php echo $i; ?>" /><span><?php echo $date_value; ?></span></td>
+	            <!--
 	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>year<?php echo $i; ?>" value="<?php echo $year_value; ?>" /><span><?php echo $year_value; ?></span>年</td>
 	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>month<?php echo $i; ?>" value="<?php echo $month_value; ?>" /><span><?php echo $month_value; ?></span>月</td>
 	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>days<?php echo $i; ?>" value="<?php echo $days_value; ?>" /><span><?php echo $days_value; ?></span>日</td>
+	            -->
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>title<?php echo $i; ?>" value="<?php echo $title_value; ?>" /><span><?php echo $title_value; ?></span></td>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>url<?php echo $i; ?>" value="<?php echo $url_value; ?>" /><span><?php echo $url_value; ?></span></td>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>other<?php echo $i; ?>" value="<?php echo $other_value; ?>" /><span><?php echo $other_value; ?></span></td>
-	            <td><input type="text" id="datepicker"></td>
 	        </tr>
 	    <?php } ?>
 	    </tbody>
 	    </table>
-		<select id="foo" name="foo">
-			<option value="10">10</option>
-			<option value="25">25</option>
-			<option value="50">50</option>
-		</select>
-	    
 	    <input type="hidden" name="action" value="update" />
 	    <input type="hidden" name="<?php echo $plugin_db; ?>total_event" value="<?php echo $total_event; ?>" />
 	    <?php
@@ -132,7 +141,7 @@ function changeEvent(){
 		    	if($i!=0){
 		    		$fst=",";
 		    	}
-		    	echo $fst.$plugin_db."year".$i.",".$plugin_db."month".$i.",".$plugin_db."days".$i.",".$plugin_db."title".$i.",".$plugin_db."url".$i.",".$plugin_db."other".$i;
+		    	echo $fst.$plugin_db."year".$i.",".$plugin_db."month".$i.",".$plugin_db."days".$i.",".$plugin_db."title".$i.",".$plugin_db."url".$i.",".$plugin_db."other".$i.",".$plugin_db."date".$i;
 		    	if($i <= $total_event){
 		    		echo ",".$plugin_db."total_event";
 		    	}
@@ -156,15 +165,18 @@ function addEvent(){
 	 	<?php
 	    	wp_nonce_field('update-options');
 			$total_event = getTotalEvent();
-			$event_data = getEventData();
+			//$event_data = getEventData();
 	    ?>
 	    <h3>新規追加</h3>
 	    <table class="widefat">
 	    <thead>
 	        <tr class="thead" valign="top">
+	            <th scope="row">日付</th>
+	            <!--
 	            <th scope="row">年</th>
 	            <th scope="row">月</th>
 	            <th scope="row">日</th>
+	            -->
 	            <th scope="row">タイトル</th>
 	            <th scope="row">URL</th>
 	            <th scope="row">その他</th>
@@ -172,9 +184,12 @@ function addEvent(){
 	    </thead>
 	    <tbody>
 	        <tr valign="top">
+	            <td><input id="datepicker" class="text_input" type="text" name="<?php echo $plugin_db; ?>date<?php echo $total_event; ?>" /></td>
+	            <!--
 	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>year<?php echo $total_event; ?>" />年</td>
 	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>month<?php echo $total_event; ?>" />月</td>
 	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>days<?php echo $total_event; ?>" />日</td>
+	            -->
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>title<?php echo $total_event; ?>" /></td>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>url<?php echo $total_event; ?>" /></td>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>other<?php echo $total_event; ?>" /></td>
@@ -188,7 +203,7 @@ function addEvent(){
 	    <p class="submit">
 	    	<input type="hidden" name="action" value="update" />
 	    	<input type="hidden" name="<?php echo $plugin_db; ?>total_event" value="<?php echo $total_event; ?>" />
-	    	<input type="hidden" name="page_options" value="<?php echo $plugin_db; ?>total_event,<?php echo $plugin_db ?>year<?php echo $add_num ?>,<?php echo $plugin_db ?>month<?php echo $add_num ?>,<?php echo $plugin_db ?>days<?php echo $add_num ?>,<?php echo $plugin_db ?>title<?php echo $add_num ?>,<?php echo $plugin_db ?>url<?php echo $add_num ?>,<?php echo $plugin_db ?>other<?php echo $add_num ?>" />
+	    	<input type="hidden" name="page_options" value="<?php echo $plugin_db; ?>total_event,<?php echo $plugin_db ?>year<?php echo $add_num ?>,<?php echo $plugin_db ?>month<?php echo $add_num ?>,<?php echo $plugin_db ?>days<?php echo $add_num ?>,<?php echo $plugin_db ?>title<?php echo $add_num ?>,<?php echo $plugin_db ?>url<?php echo $add_num ?>,<?php echo $plugin_db ?>other<?php echo $add_num ?>,<?php echo $plugin_db ?>date<?php echo $add_num ?>" />
 	        <input type="submit" class="button-primary" value="<?php _e('Add Event') ?>" />
 	    </p>
 	</form>
@@ -208,23 +223,29 @@ function deleteEvent(){
         	wp_nonce_field('update-options');
 			$total_event = getTotalEvent();
 			$event_data = getEventData();
+			$sort_data = sortData();
         ?>
+	    	<div id="check">
 	    <table class="widefat">
 	    <thead>
 	        <tr class="thead">
-	        	<th></th>
+	        	<th><label><input type="checkbox" id="all" />全選択</label></th>
 	        	<th scope="row">削除番号</th>
 	        </tr>
 	    </thead>
 	    <tbody>
         		<?php
-        		for($i = 0; $i < $total_event; $i++){
-			    	$year_value = $event_data["year"][$i];
-			    	$month_value = $event_data["month"][$i];
-			    	$days_value = $event_data["days"][$i];
-			    	$title_value = $event_data["title"][$i];
-			    	$url_value = $event_data["url"][$i];
-			    	$other_value = $event_data["other"][$i];
+        		
+		    	for($i = $total_event-1; $i >= 0; $i--){
+		    		$data = $sort_data[$i];
+		    	
+			    	$year_value = $data["year"];
+			    	$month_value = $data["month"];
+			    	$days_value = $data["days"];
+			    	$title_value = $data["title"];
+			    	$url_value = $data["url"];
+			    	$other_value = $data["other"];
+			    	$date_value = $data["date"];
 		    	?>
         	<tr>
         		<td><input type="checkbox" name="delete[]" value="<?php echo $i ?>" /></td>
@@ -233,6 +254,7 @@ function deleteEvent(){
         		<?php } ?>
        	</tbody>
         </table>
+        	</div>
         <p class="submit">
         	<input type="hidden" name="action" value="update" />
 	    	<input type="hidden" name="<?php echo $plugin_db; ?>total_event" value="<?php echo $total_event; ?>" />
@@ -260,6 +282,7 @@ function undercard(){
             delete_option($plugin_db.'title'.$delId);
             delete_option($plugin_db.'url'.$delId);
             delete_option($plugin_db.'other'.$delId);
+            delete_option($plugin_db.'date'.$delId);
             $delete_cnt++;
         }
 	    ?>
@@ -289,6 +312,7 @@ function arrangementEvent(){
    		update_option($plugin_db.'title'.$i, $event_data['title'][$i]);
    		update_option($plugin_db.'url'.$i, $event_data['url'][$i]);
    		update_option($plugin_db.'other'.$i, $event_data['other'][$i]);
+   		update_option($plugin_db.'date'.$i, $event_data['date'][$i]);
    		$event_cnt++;
     }
     update_option( $plugin_db.'total_event', $event_cnt );
@@ -311,6 +335,7 @@ function uninstall_hook_easy_manage_event () {
    		delete_option($plugin_db.'title'.$i);
    		delete_option($plugin_db.'url'.$i);
    		delete_option($plugin_db.'other'.$i);
+   		delete_option($plugin_db.'date'.$i);
     }
 }
 
@@ -329,6 +354,20 @@ function showDebugData() {
 	echo "<pre>";
 	print_r($event_data);
 	echo "</pre>";
+	
+	echo "sorted <br />";
+	$sort_data = sortData();
+	
+	foreach ($sort_data as $key => $row) {
+	    echo $row['year'] . " : ";
+	    echo $row['month'] . " : ";
+	    echo $row['days'] . " : ";
+	    echo $row['title'] . " : ";
+	    echo $row['url'] . " : ";
+	    echo $row['other'] . " : ";
+	    echo $row['date'] . "<br />";
+	}
+	
     echo "</div>";
 }
 
@@ -351,13 +390,14 @@ function getEventData(){
     $event_cnt = 0;
     
     for($i = 0; $i < $total_event; $i++){
-    	if( get_option( $plugin_db.'year'.$i ) != '' || get_option( $plugin_db.'month'.$i ) != '' || get_option( $plugin_db.'days'.$i ) != '' || get_option( $plugin_db.'title'.$i ) != '' || get_option( $plugin_db.'url'.$i ) != '' || get_option( $plugin_db.'other'.$i ) != ''){
+    	if( get_option( $plugin_db.'year'.$i ) != '' || get_option( $plugin_db.'month'.$i ) != '' || get_option( $plugin_db.'days'.$i ) != '' || get_option( $plugin_db.'title'.$i ) != '' || get_option( $plugin_db.'url'.$i ) != '' || get_option( $plugin_db.'other'.$i ) != '' || get_option( $plugin_db.'date'.$i ) != ''){
     		$event_year[$i] = get_option( $plugin_db.'year'.$i );
     		$event_month[$i] = get_option( $plugin_db.'month'.$i );
     		$event_day[$i] = get_option( $plugin_db.'days'.$i );
     		$event_title[$i] = get_option( $plugin_db.'title'.$i );
     		$event_url[$i] = get_option( $plugin_db.'url'.$i );
     		$event_other[$i] = get_option( $plugin_db.'other'.$i );
+    		$event_date[$i] = get_option( $plugin_db.'date'.$i );
     		$event_cnt++;
     	}
     }
@@ -369,6 +409,7 @@ function getEventData(){
     	$event_title[0] = 0;
     	$event_url[0] = 0;
     	$event_other[0] = 0;
+    	$event_date[0] = 0;
     }
 
     $event_data["year"] = array_merge($event_year);
@@ -377,34 +418,54 @@ function getEventData(){
     $event_data["title"] = array_merge($event_title);
     $event_data["url"] = array_merge($event_url);
     $event_data["other"] = array_merge($event_other);
+    $event_data["date"] = array_merge($event_date);
     
     return $event_data;
 }
+
+//!< イベントの情報を配列で返す
+function getEventData2(){
+	global $plugin_db;
+	$total_event = getTotalEvent();
+	$data = getEventData();
+	
+	for($i = 0; $i < $total_event; $i++){
+    		$event_data[$i]["year"] = $data["year"][$i];
+    		$event_data[$i]["month"] = $data["month"][$i];
+    		$event_data[$i]["days"] = $data["days"][$i];
+    		$event_data[$i]["title"] = $data["title"][$i];
+    		$event_data[$i]["url"] = $data["url"][$i];
+    		$event_data[$i]["other"] = $data["other"][$i];
+    		$event_data[$i]["date"] = $data["date"][$i];
+	}
+
+    return $event_data;
+}
+
+//!< 10未満の文字に0を追加する
 function addZero($value){
 	if($value < 10){
 		$value = "0".$value;
 	}
 	return $value;
-
 }
 //!< 日付順にソート
 function sortData(){
 	global $plugin_db;
-	$total_event = getTotalEvent();
-	$event_data = getEventData();
+	$data = getEventData2();
 	
 	// 列方向の配列を得る
 	foreach ($data as $key => $row) {
 	    $year[$key]  = $row['year'];
 	    $month[$key] = $row['month'];
 	    $days[$key]  = $row['days'];
-	    $title[$key] = $row['month'];
-	    $year[$key]  = $row['year'];
-	    $month[$key] = $row['month'];
+	    $title[$key] = $row['title'];
+	    $url[$key]  = $row['url'];
+	    $other[$key] = $row['other'];
+	    $date[$key] = $row['date'];
 	}
 	
-	// データを volume の降順、edition の昇順にソートする。
-	// $data を最後のパラメータとして渡し、同じキーでソートする。
-	array_multisort($volume, SORT_DESC, $edition, SORT_ASC, $data);	
+	array_multisort($date, SORT_ASC, $title, SORT_ASC, $data);	
+	return $data;
 }
 ?>
