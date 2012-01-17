@@ -4,14 +4,13 @@ j(function() {
 	var page = 0;
 	var num = 10;
 	function draw() {
-		//j('#update_event #page').html(page + 1);
 		j('#update_event tr').hide();
 		j('#update_event tr:first, #update_event tr:gt(' + page * num + '):lt('+num+')').show();
 	}
 	j('#update_event #prev').click(function() {
 		if (page > 0) {	
 			page--;
-			draw();
+			draw();a
 		}
 	});
 	
@@ -28,4 +27,10 @@ j(function() {
         num = j(this).val();
         draw();
     });
+    
+    //j("#datepicker").datepicker();
+    j('#datepicker').datepicker({
+		dateFormat: 'yy/mm/dd'
+	});
+    
 });

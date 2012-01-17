@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Easy Event Manager
-Version: 0.3
+Version: 0.4
 Plugin URI: http://web.lugn-design.com
 Author: Rosetta
 Author URI: http://web.lugn-design.com
@@ -41,6 +41,8 @@ function wp_custom_admin_Lib() {
 		$plugin_url = (is_ssl()) ? str_replace('http://','https://', WP_PLUGIN_URL) : WP_PLUGIN_URL;
 		$plugin_url .= "/EasyEventManager/";
 	?>
+	<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 	<script type="text/javascript" language="javascript" src="<?php echo $plugin_url; ?>js/script.js"></script>
 	<?php
 }
@@ -90,6 +92,7 @@ function changeEvent(){
 	            <th scope="row">タイトル</th>
 	            <th scope="row">URL</th>
 	            <th scope="row">その他</th>
+	            <th scope="row">pickr</th>
 	        </tr>
 	    </thead>
 	    <tbody>
@@ -110,6 +113,7 @@ function changeEvent(){
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>title<?php echo $i; ?>" value="<?php echo $title_value; ?>" /><span><?php echo $title_value; ?></span></td>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>url<?php echo $i; ?>" value="<?php echo $url_value; ?>" /><span><?php echo $url_value; ?></span></td>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>other<?php echo $i; ?>" value="<?php echo $other_value; ?>" /><span><?php echo $other_value; ?></span></td>
+	            <td><input type="text" id="datepicker"></td>
 	        </tr>
 	    <?php } ?>
 	    </tbody>
@@ -381,5 +385,26 @@ function addZero($value){
 		$value = "0".$value;
 	}
 	return $value;
+
+}
+//!< 日付順にソート
+function sortData(){
+	global $plugin_db;
+	$total_event = getTotalEvent();
+	$event_data = getEventData();
+	
+	// 列方向の配列を得る
+	foreach ($data as $key => $row) {
+	    $year[$key]  = $row['year'];
+	    $month[$key] = $row['month'];
+	    $days[$key]  = $row['days'];
+	    $title[$key] = $row['month'];
+	    $year[$key]  = $row['year'];
+	    $month[$key] = $row['month'];
+	}
+	
+	// データを volume の降順、edition の昇順にソートする。
+	// $data を最後のパラメータとして渡し、同じキーでソートする。
+	array_multisort($volume, SORT_DESC, $edition, SORT_ASC, $data);	
 }
 ?>
