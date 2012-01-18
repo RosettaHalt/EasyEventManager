@@ -6,26 +6,22 @@ j(function() {
 	var page = 0;
 	var num = 10;
 	var timer;
-	function draw() {
+	function draw(){
 		j('#update_event tr').hide();
 		j('#update_event tr:first, #update_event tr:gt(' + page * num + '):lt('+num+')').show();
+		j('#current_page').html(page+1);
+		j('#total_page').html(Math.floor((j('#update_event tr').size()-1)/num+1));
 	}
-	function redraw() {
-		//alert(0);
-		j('#update_event tr').hide();
-		j('#update_event tr:first, #update_event tr:gt(' + page * num + '):lt('+num+')').show();
-		
-	}
-	j('#update_event #prev').click(function() {
-		if (page > 0) {	
+	j('#update_event #prev').click(function(){
+		if (page > 0){
 			page--;
 			draw();
 		}
 		return false;
 	});
 	
-	j('#update_event #next').click(function() {
-		if (page < (j('#update_event tr').size() - 1) / num - 1) {
+	j('#update_event #next').click(function(){
+		if (page < (j('#update_event tr').size() - 1) / num - 1){
 			page++;
 			draw();
 		}
@@ -44,9 +40,8 @@ j(function() {
     });
 	
 	//!< ソート時にテーブルのページングを調整
-	j('#update_event th').click(function() {
-		//page = 0;
-		timer = setTimeout(function() { redraw() }, 100);
+	j('#update_event th').click(function(){
+		timer = setTimeout(function(){ draw() }, 100);
 		
 	});
     

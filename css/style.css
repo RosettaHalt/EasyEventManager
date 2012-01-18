@@ -16,6 +16,9 @@ table td span{
 	padding: 3px 4px;
 	margin-right: 5px;
 }
+#total_page{
+	margin-right: 5px;
+}
 #prev,
 #next{
 	text-decoration: none;

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Easy Event Manager
-Version: 0.5
+Version: 0.5.1
 Plugin URI: http://web.lugn-design.com
 Author: Rosetta
 Author URI: http://web.lugn-design.com
@@ -76,18 +76,19 @@ function changeEvent(){
 	<div class="update_event" id="update_event">
 	<h3>内容の変更</h3>
 	<a href="" id="prev">←</a>
+	<span id="current_page">1</span> / <span id="total_page">0</span>
 	<a href="" id="next">→</a>
 	<select id="foo" name="foo">
 		<option value="10" selected="selected">10</option>
 		<option value="25">25</option>
 		<option value="50">50</option>
-	</select>
+		<option value="100">100</option>
+	</select>件表示
 	<form method="post" action="options.php">
 	    <?php
 	    	wp_nonce_field('update-options');
 			$total_event = getTotalEvent();
-			//$event_data = getEventData();
-			$sort_data = sortData();
+			$sort_data = getEventData2();
 	    ?>
 	    <table class="widefat" id="changetable">
 	    <thead>
@@ -217,7 +218,7 @@ function deleteEvent(){
 	global $plugin_db;
 	?>
 	<div class="delete_event">
-	<h3>削除</h3>
+	<h3>削除</h3><label><input type="checkbox" id="all" />全選択</label>
 	<form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" style="width:200px;" >
      	<?php
         	wp_nonce_field('update-options');
@@ -229,11 +230,11 @@ function deleteEvent(){
 	    <table class="widefat">
 	    <thead>
 	        <tr class="thead">
-	        	<th><label><input type="checkbox" id="all" />全選択</label></th>
-	        	<th scope="row">削除番号</th>
+	        	<th scope="row" colspan="<?php echo $total_event; ?>">削除番号</th>
 	        </tr>
 	    </thead>
 	    <tbody>
+	    	<tr>
         		<?php
         		
 		    	for($i = $total_event-1; $i >= 0; $i--){
@@ -247,11 +248,11 @@ function deleteEvent(){
 			    	$other_value = $data["other"];
 			    	$date_value = $data["date"];
 		    	?>
-        	<tr>
-        		<td><input type="checkbox" name="delete[]" value="<?php echo $i ?>" /></td>
-		    	<td>No. <?php echo $i; ?></td>
-        	</tr>
+	        	
+	        		<td>No. <?php echo addZero($i); ?><input type="checkbox" name="delete[]" value="<?php echo $i ?>" /></td>
+	        	
         		<?php } ?>
+        	</tr>
        	</tbody>
         </table>
         	</div>
@@ -362,6 +363,7 @@ function showDebugData() {
 	    echo $row['year'] . " : ";
 	    echo $row['month'] . " : ";
 	    echo $row['days'] . " : ";
+	    echo $row['week'] . " : ";
 	    echo $row['title'] . " : ";
 	    echo $row['url'] . " : ";
 	    echo $row['other'] . " : ";
@@ -386,18 +388,22 @@ function getTotalEvent(){
 function getEventData(){
 	global $plugin_db;
 	$total_event = getTotalEvent();
-
+	$weekjp_array = array('日', '月', '火', '水', '木', '金', '土');
     $event_cnt = 0;
     
     for($i = 0; $i < $total_event; $i++){
     	if( get_option( $plugin_db.'year'.$i ) != '' || get_option( $plugin_db.'month'.$i ) != '' || get_option( $plugin_db.'days'.$i ) != '' || get_option( $plugin_db.'title'.$i ) != '' || get_option( $plugin_db.'url'.$i ) != '' || get_option( $plugin_db.'other'.$i ) != '' || get_option( $plugin_db.'date'.$i ) != ''){
-    		$event_year[$i] = get_option( $plugin_db.'year'.$i );
-    		$event_month[$i] = get_option( $plugin_db.'month'.$i );
-    		$event_day[$i] = get_option( $plugin_db.'days'.$i );
     		$event_title[$i] = get_option( $plugin_db.'title'.$i );
     		$event_url[$i] = get_option( $plugin_db.'url'.$i );
     		$event_other[$i] = get_option( $plugin_db.'other'.$i );
     		$event_date[$i] = get_option( $plugin_db.'date'.$i );
+    		
+    		
+			$pieces = explode("/", $event_date[$i]);
+    		$event_year[$i] = $pieces[0];
+    		$event_month[$i] = $pieces[1];
+    		$event_day[$i] = $pieces[2];
+    		$event_week[$i] = $weekjp_array[date('w', mktime(0, 0, 0, $event_month[$i], $event_day[$i], $event_year[$i]))];
     		$event_cnt++;
     	}
     }
@@ -410,11 +416,13 @@ function getEventData(){
     	$event_url[0] = 0;
     	$event_other[0] = 0;
     	$event_date[0] = 0;
+    	$event_week[0] = 0;
     }
-
+    
     $event_data["year"] = array_merge($event_year);
     $event_data["month"] = array_merge($event_month);
     $event_data["days"] = array_merge($event_day);
+    $event_data["week"] = array_merge($event_week);
     $event_data["title"] = array_merge($event_title);
     $event_data["url"] = array_merge($event_url);
     $event_data["other"] = array_merge($event_other);
@@ -433,6 +441,7 @@ function getEventData2(){
     		$event_data[$i]["year"] = $data["year"][$i];
     		$event_data[$i]["month"] = $data["month"][$i];
     		$event_data[$i]["days"] = $data["days"][$i];
+    		$event_data[$i]["week"] = $data["week"][$i];
     		$event_data[$i]["title"] = $data["title"][$i];
     		$event_data[$i]["url"] = $data["url"][$i];
     		$event_data[$i]["other"] = $data["other"][$i];
@@ -459,6 +468,7 @@ function sortData(){
 	    $year[$key]  = $row['year'];
 	    $month[$key] = $row['month'];
 	    $days[$key]  = $row['days'];
+	    $week[$key]  = $row['week'];
 	    $title[$key] = $row['title'];
 	    $url[$key]  = $row['url'];
 	    $other[$key] = $row['other'];
