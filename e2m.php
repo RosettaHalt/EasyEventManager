@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Easy Event Manager
-Version: 0.5.2
+Version: 0.5.3
 Plugin URI: http://web.lugn-design.com
 Author: Rosetta
 Author URI: http://web.lugn-design.com
@@ -17,7 +17,6 @@ add_action('admin_menu', 'admin_menu_easy_manage_event');
 //!< アクションフックのコールバッック関数
 function admin_menu_easy_manage_event () {
     // 設定メニュー下にサブメニューを追加
-    //add_options_page('イベント管理', 'イベント管理', manage_options, __FILE__, 'easy_manage_event');
 	add_options_page('イベント管理', 'イベント管理', 'level_8', __FILE__, 'easy_manage_event');
 }
 
@@ -58,12 +57,12 @@ function easy_manage_event () {
         <h2>Easy Event Manager</h2>
 
         <?php
-        	//undercard();
-        	//addEvent();
-        	//changeEvent();
-        	//deleteEvent();
+        	undercard();
+        	addEvent();
+        	changeEvent();
+        	deleteEvent();
 
-        	//showDebugData();	// デバッグ用
+        	showDebugData();	// デバッグ用
         ?>
     </div>
 <?php

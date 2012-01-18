@@ -128,7 +128,7 @@
                 sortList: [],
                 headerList: [],
                 dateFormat: "us",
-                decimal: '/¥.|¥,/g',
+                decimal: '/\.|\,/g',
                 onRenderHeader: null,
                 selectorHeaders: 'thead th',
                 debug: false
@@ -185,7 +185,7 @@
                         }
 
                         if (table.config.debug) {
-                            parsersDebug += "column:" + i + " parser:" + p.id + "¥n";
+                            parsersDebug += "column:" + i + " parser:" + p.id + "\n";
                         }
 
                         list.push(p);
@@ -856,7 +856,7 @@
             };
             this.isDigit = function (s, config) {
                 // replace all an wanted chars and match.
-                return /^[-+]?¥d*$/.test($.trim(s.replace(/[,.']/g, '')));
+                return /^[-+]?\d*$/.test($.trim(s.replace(/[,.']/g, '')));
             };
             this.clearTableBody = function (table) {
                 if ($.browser.msie) {
@@ -903,16 +903,16 @@
     ts.addParser({
         id: "currency",
         is: function (s) {
-            return /^[ﾂ｣$竄ｬ?.]/.test(s);
+            return /^[£$€?.]/.test(s);
         }, format: function (s) {
-            return $.tablesorter.formatFloat(s.replace(new RegExp(/[ﾂ｣$竄ｬ]/g), ""));
+            return $.tablesorter.formatFloat(s.replace(new RegExp(/[£$€]/g), ""));
         }, type: "numeric"
     });
 
     ts.addParser({
         id: "ipAddress",
         is: function (s) {
-            return /^¥d{2,3}[¥.]¥d{2,3}[¥.]¥d{2,3}[¥.]¥d{2,3}$/.test(s);
+            return /^\d{2,3}[\.]\d{2,3}[\.]\d{2,3}[\.]\d{2,3}$/.test(s);
         }, format: function (s) {
             var a = s.split("."),
                 r = "",
@@ -932,16 +932,16 @@
     ts.addParser({
         id: "url",
         is: function (s) {
-            return /^(https?|ftp|file):¥/¥/$/.test(s);
+            return /^(https?|ftp|file):\/\/$/.test(s);
         }, format: function (s) {
-            return jQuery.trim(s.replace(new RegExp(/(https?|ftp|file):¥/¥//), ''));
+            return jQuery.trim(s.replace(new RegExp(/(https?|ftp|file):\/\//), ''));
         }, type: "text"
     });
 
     ts.addParser({
         id: "isoDate",
         is: function (s) {
-            return /^¥d{4}[¥/-]¥d{1,2}[¥/-]¥d{1,2}$/.test(s);
+            return /^\d{4}[\/-]\d{1,2}[\/-]\d{1,2}$/.test(s);
         }, format: function (s) {
             return $.tablesorter.formatFloat((s != "") ? new Date(s.replace(
             new RegExp(/-/g), "/")).getTime() : "0");
@@ -951,7 +951,7 @@
     ts.addParser({
         id: "percent",
         is: function (s) {
-            return /¥%$/.test($.trim(s));
+            return /\%$/.test($.trim(s));
         }, format: function (s) {
             return $.tablesorter.formatFloat(s.replace(new RegExp(/%/g), ""));
         }, type: "numeric"
@@ -960,7 +960,7 @@
     ts.addParser({
         id: "usLongDate",
         is: function (s) {
-            return s.match(new RegExp(/^[A-Za-z]{3,10}¥.? [0-9]{1,2}, ([0-9]{4}|'?[0-9]{2}) (([0-2]?[0-9]:[0-5][0-9])|([0-1]?[0-9]:[0-5][0-9]¥s(AM|PM)))$/));
+            return s.match(new RegExp(/^[A-Za-z]{3,10}\.? [0-9]{1,2}, ([0-9]{4}|'?[0-9]{2}) (([0-2]?[0-9]:[0-5][0-9])|([0-1]?[0-9]:[0-5][0-9]\s(AM|PM)))$/));
         }, format: function (s) {
             return $.tablesorter.formatFloat(new Date(s).getTime());
         }, type: "numeric"
@@ -969,18 +969,18 @@
     ts.addParser({
         id: "shortDate",
         is: function (s) {
-            return /¥d{1,2}[¥/¥-]¥d{1,2}[¥/¥-]¥d{2,4}/.test(s);
+            return /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/.test(s);
         }, format: function (s, table) {
             var c = table.config;
-            s = s.replace(/¥-/g, "/");
+            s = s.replace(/\-/g, "/");
             if (c.dateFormat == "us") {
                 // reformat the string in ISO format
-                s = s.replace(/(¥d{1,2})[¥/¥-](¥d{1,2})[¥/¥-](¥d{4})/, "$3/$1/$2");
+                s = s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/, "$3/$1/$2");
             } else if (c.dateFormat == "uk") {
                 // reformat the string in ISO format
-                s = s.replace(/(¥d{1,2})[¥/¥-](¥d{1,2})[¥/¥-](¥d{4})/, "$3/$2/$1");
+                s = s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/, "$3/$2/$1");
             } else if (c.dateFormat == "dd/mm/yy" || c.dateFormat == "dd-mm-yy") {
-                s = s.replace(/(¥d{1,2})[¥/¥-](¥d{1,2})[¥/¥-](¥d{2})/, "$1/$2/$3");
+                s = s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2})/, "$1/$2/$3");
             }
             return $.tablesorter.formatFloat(new Date(s).getTime());
         }, type: "numeric"
@@ -988,7 +988,7 @@
     ts.addParser({
         id: "time",
         is: function (s) {
-            return /^(([0-2]?[0-9]:[0-5][0-9])|([0-1]?[0-9]:[0-5][0-9]¥s(am|pm)))$/.test(s);
+            return /^(([0-2]?[0-9]:[0-5][0-9])|([0-1]?[0-9]:[0-5][0-9]\s(am|pm)))$/.test(s);
         }, format: function (s) {
             return $.tablesorter.formatFloat(new Date("2000/01/01 " + s).getTime());
         }, type: "numeric"
