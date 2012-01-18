@@ -4,10 +4,7 @@
 .text_input{
 	width: 240px;
 }
-table td span{
-	display: none;
-}
-.dataTables_filter{
+.update_event table td span{
 	display: none;
 }
 .update_event #prev,

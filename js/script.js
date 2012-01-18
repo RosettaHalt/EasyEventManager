@@ -1,7 +1,7 @@
 var j = jQuery.noConflict();
 
 j(function() {
-	
+
 	//!< ページング
 	var page = 0;
 	var num = 10;
@@ -19,7 +19,7 @@ j(function() {
 		}
 		return false;
 	});
-	
+
 	j('#update_event #next').click(function(){
 		if (page < (j('#update_event tr').size() - 1) / num - 1){
 			page++;
@@ -27,9 +27,9 @@ j(function() {
 		}
 		return false;
 	});
-	
+
 	draw();
-	
+
 	//!< selectの変更時にページング切り替え
     j('select#foo').change(function(){
         num = j(this).val();
@@ -38,18 +38,18 @@ j(function() {
         }
         draw();
     });
-	
+
 	//!< ソート時にテーブルのページングを調整
 	j('#update_event th').click(function(){
 		timer = setTimeout(function(){ draw() }, 100);
-		
+
 	});
-    
+
     //!< 日付入力のデイトピッカー
     j('#datepicker').datepicker({
 		dateFormat: 'yy/mm/dd'
 	});
-	
+
 	//!< チェックボックスを全選択
 	j('#all').click(function(){
 		if(this.checked){
@@ -59,5 +59,5 @@ j(function() {
 			j('#check input').removeAttr('checked');
 		}
 	});
-	
+
 });

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Easy Event Manager
-Version: 0.5.1
+Version: 0.5.2
 Plugin URI: http://web.lugn-design.com
 Author: Rosetta
 Author URI: http://web.lugn-design.com
@@ -17,7 +17,8 @@ add_action('admin_menu', 'admin_menu_easy_manage_event');
 //!< アクションフックのコールバッック関数
 function admin_menu_easy_manage_event () {
     // 設定メニュー下にサブメニューを追加
-    add_options_page('イベント管理', 'イベント管理', manage_options, __FILE__, 'easy_manage_event');
+    //add_options_page('イベント管理', 'イベント管理', manage_options, __FILE__, 'easy_manage_event');
+	add_options_page('イベント管理', 'イベント管理', 'level_8', __FILE__, 'easy_manage_event');
 }
 
 //!< CSSの読み込み
@@ -29,20 +30,20 @@ function wp_custom_admin_Lib() {
 	<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="<?php echo $plugin_url; ?>js/script.js"></script>
-	<script type="text/javascript" src="<?php echo $plugin_url; ?>js/sort/jquery.tablesorter.js"></script> 
+	<script type="text/javascript" src="<?php echo $plugin_url; ?>js/sort/jquery.tablesorter.js"></script>
 	<script type="text/javascript">
 		var j = jQuery.noConflict();
 		j(function() {
-	    <?php 
+	    <?php
 			$total_event = getTotalEvent();
-			
+
     		for($i = 0; $i < $total_event; $i++){
     			echo "j(\"#datepicker".$i."\").datepicker({dateFormat: 'yy/mm/dd'});\n";
     		}
 		?>
 			j("#changetable").tablesorter({
 			});
-		}); 
+		});
 	</script>
 	<?php
 }
@@ -56,20 +57,18 @@ function easy_manage_event () {
     <div class="wrap">
         <h2>Easy Event Manager</h2>
 
-        <?php        
-        	undercard();
-        	addEvent();
-        	changeEvent();
-        	deleteEvent();
+        <?php
+        	//undercard();
+        	//addEvent();
+        	//changeEvent();
+        	//deleteEvent();
 
-        	showDebugData();	// デバッグ用
+        	//showDebugData();	// デバッグ用
         ?>
     </div>
 <?php
 }
-?>
 
-<?php
 //!< 日付変更用の関数
 function changeEvent(){
 	global $plugin_db; ?>
@@ -95,11 +94,6 @@ function changeEvent(){
 	        <tr class="thead" valign="top">
 	            <th scope="row">No.</th>
 	            <th scope="row">日付</th>
-	            <!--
-	            <th scope="row">年</th>
-	            <th scope="row">月</th>
-	            <th scope="row">日</th>
-	            -->
 	            <th scope="row">タイトル</th>
 	            <th scope="row">URL</th>
 	            <th scope="row">その他</th>
@@ -107,13 +101,8 @@ function changeEvent(){
 	    </thead>
 	    <tbody>
 	    <?php
-	    
 		    for($i = $total_event-1; $i >= 0; $i--){
 		    	$data = $sort_data[$i];
-		    	
-			    $year_value = $data["year"];
-			    $month_value = $data["month"];
-			    $days_value = $data["days"];
 			    $title_value = $data["title"];
 			    $url_value = $data["url"];
 			    $other_value = $data["other"];
@@ -122,11 +111,6 @@ function changeEvent(){
 	        <tr class="thead" valign="top">
 	            <td scope="row"><?php echo addZero($i); ?> : </th>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>date<?php echo $i; ?>" value="<?php echo $date_value; ?>" id="datepicker<?php echo $i; ?>" /><span><?php echo $date_value; ?></span></td>
-	            <!--
-	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>year<?php echo $i; ?>" value="<?php echo $year_value; ?>" /><span><?php echo $year_value; ?></span>年</td>
-	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>month<?php echo $i; ?>" value="<?php echo $month_value; ?>" /><span><?php echo $month_value; ?></span>月</td>
-	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>days<?php echo $i; ?>" value="<?php echo $days_value; ?>" /><span><?php echo $days_value; ?></span>日</td>
-	            -->
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>title<?php echo $i; ?>" value="<?php echo $title_value; ?>" /><span><?php echo $title_value; ?></span></td>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>url<?php echo $i; ?>" value="<?php echo $url_value; ?>" /><span><?php echo $url_value; ?></span></td>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>other<?php echo $i; ?>" value="<?php echo $other_value; ?>" /><span><?php echo $other_value; ?></span></td>
@@ -142,7 +126,7 @@ function changeEvent(){
 		    	if($i!=0){
 		    		$fst=",";
 		    	}
-		    	echo $fst.$plugin_db."year".$i.",".$plugin_db."month".$i.",".$plugin_db."days".$i.",".$plugin_db."title".$i.",".$plugin_db."url".$i.",".$plugin_db."other".$i.",".$plugin_db."date".$i;
+		    	echo $fst.$plugin_db."title".$i.",".$plugin_db."url".$i.",".$plugin_db."other".$i.",".$plugin_db."date".$i;
 		    	if($i <= $total_event){
 		    		echo ",".$plugin_db."total_event";
 		    	}
@@ -154,10 +138,9 @@ function changeEvent(){
 	    </p>
 	</form>
 	</div>
-<?php }
-?>
+<?php 
+}
 
-<?php
 //!< 日付追加用の関数
 function addEvent(){
 	global $plugin_db; ?>
@@ -166,18 +149,12 @@ function addEvent(){
 	 	<?php
 	    	wp_nonce_field('update-options');
 			$total_event = getTotalEvent();
-			//$event_data = getEventData();
 	    ?>
 	    <h3>新規追加</h3>
 	    <table class="widefat">
 	    <thead>
 	        <tr class="thead" valign="top">
 	            <th scope="row">日付</th>
-	            <!--
-	            <th scope="row">年</th>
-	            <th scope="row">月</th>
-	            <th scope="row">日</th>
-	            -->
 	            <th scope="row">タイトル</th>
 	            <th scope="row">URL</th>
 	            <th scope="row">その他</th>
@@ -186,11 +163,6 @@ function addEvent(){
 	    <tbody>
 	        <tr valign="top">
 	            <td><input id="datepicker" class="text_input" type="text" name="<?php echo $plugin_db; ?>date<?php echo $total_event; ?>" /></td>
-	            <!--
-	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>year<?php echo $total_event; ?>" />年</td>
-	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>month<?php echo $total_event; ?>" />月</td>
-	            <td><input class="num_input" type="text" name="<?php echo $plugin_db; ?>days<?php echo $total_event; ?>" />日</td>
-	            -->
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>title<?php echo $total_event; ?>" /></td>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>url<?php echo $total_event; ?>" /></td>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>other<?php echo $total_event; ?>" /></td>
@@ -204,15 +176,14 @@ function addEvent(){
 	    <p class="submit">
 	    	<input type="hidden" name="action" value="update" />
 	    	<input type="hidden" name="<?php echo $plugin_db; ?>total_event" value="<?php echo $total_event; ?>" />
-	    	<input type="hidden" name="page_options" value="<?php echo $plugin_db; ?>total_event,<?php echo $plugin_db ?>year<?php echo $add_num ?>,<?php echo $plugin_db ?>month<?php echo $add_num ?>,<?php echo $plugin_db ?>days<?php echo $add_num ?>,<?php echo $plugin_db ?>title<?php echo $add_num ?>,<?php echo $plugin_db ?>url<?php echo $add_num ?>,<?php echo $plugin_db ?>other<?php echo $add_num ?>,<?php echo $plugin_db ?>date<?php echo $add_num ?>" />
+	    	<input type="hidden" name="page_options" value="<?php echo $plugin_db; ?>total_event,<?php echo $plugin_db ?>title<?php echo $add_num ?>,<?php echo $plugin_db ?>url<?php echo $add_num ?>,<?php echo $plugin_db ?>other<?php echo $add_num ?>,<?php echo $plugin_db ?>date<?php echo $add_num ?>" />
 	        <input type="submit" class="button-primary" value="<?php _e('Add Event') ?>" />
 	    </p>
 	</form>
 	</div>
-<?php }
-?>
+<?php 
+}
 
-<?php
 //!< 日付削除用の関数
 function deleteEvent(){
 	global $plugin_db;
@@ -230,27 +201,18 @@ function deleteEvent(){
 	    <table class="widefat">
 	    <thead>
 	        <tr class="thead">
-	        	<th scope="row" colspan="<?php echo $total_event; ?>">削除番号</th>
+	        	<th scope="row" colspan="<?php echo $total_event; ?>">削除</th>
 	        </tr>
 	    </thead>
 	    <tbody>
 	    	<tr>
         		<?php
-        		
+
 		    	for($i = $total_event-1; $i >= 0; $i--){
-		    		$data = $sort_data[$i];
-		    	
-			    	$year_value = $data["year"];
-			    	$month_value = $data["month"];
-			    	$days_value = $data["days"];
-			    	$title_value = $data["title"];
-			    	$url_value = $data["url"];
-			    	$other_value = $data["other"];
-			    	$date_value = $data["date"];
 		    	?>
-	        	
+
 	        		<td>No. <?php echo addZero($i); ?><input type="checkbox" name="delete[]" value="<?php echo $i ?>" /></td>
-	        	
+
         		<?php } ?>
         	</tr>
        	</tbody>
@@ -263,10 +225,9 @@ function deleteEvent(){
         </p>
     </form>
     </div>
-<?php }
-?>
+<?php 
+}
 
-<?php
 //!< イベント更新や削除などの処理が発生した場合の処理
 function undercard(){
 	global $plugin_db;
@@ -277,9 +238,6 @@ function undercard(){
     if (isset($delIds)) {
         foreach ($delIds as $delId) {
             $delete_item .= "イベントNo.".$delId."<br />";
-            delete_option($plugin_db.'year'.$delId);
-            delete_option($plugin_db.'month'.$delId);
-            delete_option($plugin_db.'days'.$delId);
             delete_option($plugin_db.'title'.$delId);
             delete_option($plugin_db.'url'.$delId);
             delete_option($plugin_db.'other'.$delId);
@@ -292,24 +250,20 @@ function undercard(){
 		</div>
 	    <?php
     }
-    
-    //!< 削除したイベントを詰める。
-    arrangementEvent();
-}
 
+    //!< 削除したイベントを詰める。
+    //arrangementEvent();
+}
 //!< イベント削除後の順整理
 function arrangementEvent(){
 	global $plugin_db;
 	$event_data = getEventData();
 	$ary = array_merge($event_data);
 
-    $event_cnt = 0;    
+    $event_cnt = 0;
     $total_event = count($ary['year']);
-    
+
     for($i = 0; $i < $total_event; $i++){
-    	update_option($plugin_db.'year'.$i, $event_data['year'][$i]);
-    	update_option($plugin_db.'month'.$i, $event_data['month'][$i]);
-   		update_option($plugin_db.'days'.$i, $event_data['days'][$i]);
    		update_option($plugin_db.'title'.$i, $event_data['title'][$i]);
    		update_option($plugin_db.'url'.$i, $event_data['url'][$i]);
    		update_option($plugin_db.'other'.$i, $event_data['other'][$i]);
@@ -318,9 +272,7 @@ function arrangementEvent(){
     }
     update_option( $plugin_db.'total_event', $event_cnt );
 }
-?>
 
-<?php
 //!< プラグインを削除する際に行うオプションの削除
 if ( function_exists('register_uninstall_hook') ) {
     register_uninstall_hook(__FILE__, 'uninstall_hook_easy_manage_event');
@@ -330,9 +282,6 @@ function uninstall_hook_easy_manage_event () {
     $total_event = getTotalEvent();
 
     for($i = 0; $i < $total_event; $i++){
-    	delete_option($plugin_db.'year'.$i);
-    	delete_option($plugin_db.'month'.$i);
-   		delete_option($plugin_db.'days'.$i);
    		delete_option($plugin_db.'title'.$i);
    		delete_option($plugin_db.'url'.$i);
    		delete_option($plugin_db.'other'.$i);
@@ -344,21 +293,21 @@ function uninstall_hook_easy_manage_event () {
 function showDebugData() {
 	global $plugin_db;
 	$total_event = getTotalEvent();
-	
+
 	echo "<div class=\"show_event\">";
-	
+
 	echo "<h3>データの表示</h3>";
 
 	echo "合計イベント数 : ".$total_event;
 	$event_data = getEventData();
-	
+
 	echo "<pre>";
 	print_r($event_data);
 	echo "</pre>";
-	
+
 	echo "sorted <br />";
 	$sort_data = sortData();
-	
+
 	foreach ($sort_data as $key => $row) {
 	    echo $row['year'] . " : ";
 	    echo $row['month'] . " : ";
@@ -369,7 +318,7 @@ function showDebugData() {
 	    echo $row['other'] . " : ";
 	    echo $row['date'] . "<br />";
 	}
-	
+
     echo "</div>";
 }
 
@@ -390,15 +339,15 @@ function getEventData(){
 	$total_event = getTotalEvent();
 	$weekjp_array = array('日', '月', '火', '水', '木', '金', '土');
     $event_cnt = 0;
-    
+
     for($i = 0; $i < $total_event; $i++){
-    	if( get_option( $plugin_db.'year'.$i ) != '' || get_option( $plugin_db.'month'.$i ) != '' || get_option( $plugin_db.'days'.$i ) != '' || get_option( $plugin_db.'title'.$i ) != '' || get_option( $plugin_db.'url'.$i ) != '' || get_option( $plugin_db.'other'.$i ) != '' || get_option( $plugin_db.'date'.$i ) != ''){
+    	if( get_option( $plugin_db.'title'.$i ) != '' || get_option( $plugin_db.'url'.$i ) != '' || get_option( $plugin_db.'other'.$i ) != '' || get_option( $plugin_db.'date'.$i ) != '' || get_option( $plugin_db.'week'.$i ) != ''){
     		$event_title[$i] = get_option( $plugin_db.'title'.$i );
     		$event_url[$i] = get_option( $plugin_db.'url'.$i );
     		$event_other[$i] = get_option( $plugin_db.'other'.$i );
     		$event_date[$i] = get_option( $plugin_db.'date'.$i );
-    		
-    		
+
+
 			$pieces = explode("/", $event_date[$i]);
     		$event_year[$i] = $pieces[0];
     		$event_month[$i] = $pieces[1];
@@ -407,7 +356,7 @@ function getEventData(){
     		$event_cnt++;
     	}
     }
-    
+
     if($event_cnt == 0){
     	$event_year[0] = 0;
     	$event_month[0] = 0;
@@ -418,7 +367,7 @@ function getEventData(){
     	$event_date[0] = 0;
     	$event_week[0] = 0;
     }
-    
+
     $event_data["year"] = array_merge($event_year);
     $event_data["month"] = array_merge($event_month);
     $event_data["days"] = array_merge($event_day);
@@ -427,7 +376,7 @@ function getEventData(){
     $event_data["url"] = array_merge($event_url);
     $event_data["other"] = array_merge($event_other);
     $event_data["date"] = array_merge($event_date);
-    
+
     return $event_data;
 }
 
@@ -436,7 +385,7 @@ function getEventData2(){
 	global $plugin_db;
 	$total_event = getTotalEvent();
 	$data = getEventData();
-	
+
 	for($i = 0; $i < $total_event; $i++){
     		$event_data[$i]["year"] = $data["year"][$i];
     		$event_data[$i]["month"] = $data["month"][$i];
@@ -458,12 +407,12 @@ function addZero($value){
 	}
 	return $value;
 }
+
 //!< 日付順にソート
 function sortData(){
 	global $plugin_db;
 	$data = getEventData2();
-	
-	// 列方向の配列を得る
+
 	foreach ($data as $key => $row) {
 	    $year[$key]  = $row['year'];
 	    $month[$key] = $row['month'];
@@ -474,8 +423,8 @@ function sortData(){
 	    $other[$key] = $row['other'];
 	    $date[$key] = $row['date'];
 	}
-	
-	array_multisort($date, SORT_ASC, $title, SORT_ASC, $data);	
+
+	array_multisort($date, SORT_ASC, $title, SORT_ASC, $data);
 	return $data;
 }
 ?>
