@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Easy Event Manager
-Version: 0.5.3
+Version: 0.5.4
 Plugin URI: http://web.lugn-design.com
 Author: Rosetta
 Author URI: http://web.lugn-design.com
-Description: Easy to manage events.
+Description: Easy to manage for event calendar.
 */
 
 //!< データベースの接頭語
@@ -57,12 +57,17 @@ function easy_manage_event () {
         <h2>Easy Event Manager</h2>
 
         <?php
-        	undercard();
-        	addEvent();
-        	changeEvent();
-        	deleteEvent();
-
-        	showDebugData();	// デバッグ用
+	        if ( isset($_POST['delete_event']) && isset($_POST['delete']) ) {
+	        	confirmDeleteEvent();
+		    }
+		    else{
+	        	undercard();
+	        	addEvent();
+	        	changeEvent();
+	        	deleteEvent();
+	
+	        	showDebugData();	// デバッグ用
+        	}
         ?>
     </div>
 <?php
@@ -137,7 +142,7 @@ function changeEvent(){
 	    </p>
 	</form>
 	</div>
-<?php 
+<?php
 }
 
 //!< 日付追加用の関数
@@ -176,11 +181,11 @@ function addEvent(){
 	    	<input type="hidden" name="action" value="update" />
 	    	<input type="hidden" name="<?php echo $plugin_db; ?>total_event" value="<?php echo $total_event; ?>" />
 	    	<input type="hidden" name="page_options" value="<?php echo $plugin_db; ?>total_event,<?php echo $plugin_db ?>title<?php echo $add_num ?>,<?php echo $plugin_db ?>url<?php echo $add_num ?>,<?php echo $plugin_db ?>other<?php echo $add_num ?>,<?php echo $plugin_db ?>date<?php echo $add_num ?>" />
-	        <input type="submit" class="button-primary" value="<?php _e('Add Event') ?>" />
+	        <input type="submit" class="button-primary" value="<?php _e('イベントを追加') ?>" />
 	    </p>
 	</form>
 	</div>
-<?php 
+<?php
 }
 
 //!< 日付削除用の関数
@@ -194,37 +199,76 @@ function deleteEvent(){
         	wp_nonce_field('update-options');
 			$total_event = getTotalEvent();
 			$event_data = getEventData();
-			$sort_data = sortData();
+			$sort_data = sortData();																																									
+			$trnum = 20;
         ?>
 	    	<div id="check">
 	    <table class="widefat">
 	    <thead>
 	        <tr class="thead">
-	        	<th scope="row" colspan="<?php echo $total_event; ?>">削除</th>
+	        	<th scope="row" colspan="<?php echo $trnum; ?>">削除</th>
 	        </tr>
 	    </thead>
 	    <tbody>
-	    	<tr>
-        		<?php
-
-		    	for($i = $total_event-1; $i >= 0; $i--){
-		    	?>
-
+    		<?php
+	    	for($i = 0; $i < $total_event; $i++){ 
+	    		if($i % $trnum == 0){ echo "<tr>"; }
+	    	?>
 	        		<td>No. <?php echo addZero($i); ?><input type="checkbox" name="delete[]" value="<?php echo $i ?>" /></td>
-
-        		<?php } ?>
-        	</tr>
+	        <?php if($i % $trnum == ($trnum-1) || $i == $total_event-1){ echo "</tr>"; } ?>
+    		<?php } ?>
        	</tbody>
         </table>
         	</div>
         <p class="submit">
         	<input type="hidden" name="action" value="update" />
 	    	<input type="hidden" name="<?php echo $plugin_db; ?>total_event" value="<?php echo $total_event; ?>" />
-            <input type="submit" class="button-primary" value="<?php _e('Delete Event') ?>" />
+	    	<input type="hidden" name="delete_event" value="delete_event" />
+            <input type="submit" class="button-primary" value="<?php _e('選択したイベントを削除') ?>" />
+        </p>
+    </form>
+    <h3>期間が過ぎたイベントを全て削除</h3>
+	<form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" >
+        <p class="submit">
+        	<input type="hidden" name="action" value="update" />
+	    	<input type="hidden" name="delete_event" value="delete_event" />
+	    	<input type="hidden" name="delete" value="all_delete" />
+            <input type="submit" class="button-primary" value="<?php _e('過去のイベントを削除') ?>" />
         </p>
     </form>
     </div>
-<?php 
+<?php
+}
+
+function confirmDeleteEvent(){
+	global $plugin_db;
+	?>
+	<div class="delete_event">
+	<h3>削除</h3>
+	<form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" >
+     	<?php
+        	wp_nonce_field('update-options');
+        	if ( $_POST['delete'] == "all_delete" ) {
+        		echo "<p>以下のイベントを削除します。</p>";
+        	}
+        	else if (isset($_POST['delete'])) {
+		        $delIds = $_POST['delete'];
+		        foreach ($delIds as $delId) { 
+		        	$delete_item .= "No.".$delId. " - " .get_option( $plugin_db.'date'.$delId ). " - " .get_option( $plugin_db.'title'.$delId ). " - " .get_option( $plugin_db.'url'.$delId ). " - " .get_option( $plugin_db.'other'.$delId ). "<br />";
+		        ?>
+		        	<input type="hidden" name="delete[]" value="<?php echo $delId; ?>" />
+		        <?php }
+		        echo "<p>".$delete_item."を削除してよろしいですか。</p>";
+		    }
+        ?>
+        <p class="submit">
+        	<input type="hidden" name="action" value="update" />
+	    	<input type="hidden" name="<?php echo $plugin_db; ?>total_event" value="<?php echo $total_event; ?>" />
+            <input type="submit" class="button-primary" value="<?php _e('Delete') ?>" />
+        </p>
+    </form>
+    </div>
+<?php
 }
 
 //!< イベント更新や削除などの処理が発生した場合の処理
@@ -236,7 +280,7 @@ function undercard(){
     }
     if (isset($delIds)) {
         foreach ($delIds as $delId) {
-            $delete_item .= "イベントNo.".$delId."<br />";
+        	$delete_item .= "No.".$delId. " - " .get_option( $plugin_db.'date'.$delId ). " - " .get_option( $plugin_db.'title'.$delId ). " - " .get_option( $plugin_db.'url'.$delId ). " - " .get_option( $plugin_db.'other'.$delId ). "<br />";
             delete_option($plugin_db.'title'.$delId);
             delete_option($plugin_db.'url'.$delId);
             delete_option($plugin_db.'other'.$delId);
@@ -251,8 +295,9 @@ function undercard(){
     }
 
     //!< 削除したイベントを詰める。
-    //arrangementEvent();
+    arrangementEvent();
 }
+
 //!< イベント削除後の順整理
 function arrangementEvent(){
 	global $plugin_db;

@@ -41,8 +41,7 @@ j(function() {
 
 	//!< ソート時にテーブルのページングを調整
 	j('#update_event th').click(function(){
-		timer = setTimeout(function(){ draw() }, 100);
-
+		timer = setTimeout(function(){ draw(); }, 50);
 	});
 
     //!< 日付入力のデイトピッカー
