@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Easy Event Manager
-Version: 0.5.4
+Version: 0.6
 Plugin URI: http://web.lugn-design.com
 Author: Rosetta
 Author URI: http://web.lugn-design.com
@@ -66,7 +66,7 @@ function easy_manage_event () {
 	        	changeEvent();
 	        	deleteEvent();
 	
-	        	showDebugData();	// デバッグ用
+	        	//showDebugData();	// デバッグ用
         	}
         ?>
     </div>
@@ -227,8 +227,8 @@ function deleteEvent(){
             <input type="submit" class="button-primary" value="<?php _e('選択したイベントを削除') ?>" />
         </p>
     </form>
-    <h3>期間が過ぎたイベントを全て削除</h3>
 	<form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" >
+    	<h3>期間が過ぎたイベントを全て削除</h3>
         <p class="submit">
         	<input type="hidden" name="action" value="update" />
 	    	<input type="hidden" name="delete_event" value="delete_event" />
@@ -244,21 +244,33 @@ function confirmDeleteEvent(){
 	global $plugin_db;
 	?>
 	<div class="delete_event">
-	<h3>削除</h3>
 	<form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" >
+		<h3>削除</h3>
      	<?php
         	wp_nonce_field('update-options');
         	if ( $_POST['delete'] == "all_delete" ) {
         		echo "<p>以下のイベントを削除します。</p>";
+        		$now = date('Y/m/d');
+				$total_event = getTotalEvent();
+				$data = getEventData2();
+	    		for($i = 0; $i < $total_event; $i++){
+		    		$tmp = $data[$i];
+	    			if($now > $tmp["date"]){
+		        		$delete_item .= "No.".$i. " - " .$tmp["date"]. " - " .$tmp["title"]. " - " .$tmp["url"]. " - " .$tmp["other"]. "<br />";
+		        		echo "<input type=\"hidden\" name=\"delete[]\" value=\"".$i."\" />";
+	    			}
+	    		}
+		        echo "<p>".$delete_item."<br />この操作は取り消せません。<br />削除してもよろしいですか。</p>";
         	}
         	else if (isset($_POST['delete'])) {
 		        $delIds = $_POST['delete'];
+        		echo "<p>以下のイベントを削除します。</p>";
 		        foreach ($delIds as $delId) { 
 		        	$delete_item .= "No.".$delId. " - " .get_option( $plugin_db.'date'.$delId ). " - " .get_option( $plugin_db.'title'.$delId ). " - " .get_option( $plugin_db.'url'.$delId ). " - " .get_option( $plugin_db.'other'.$delId ). "<br />";
 		        ?>
 		        	<input type="hidden" name="delete[]" value="<?php echo $delId; ?>" />
 		        <?php }
-		        echo "<p>".$delete_item."を削除してよろしいですか。</p>";
+		        echo "<p>".$delete_item."<br />この操作は取り消せません。<br />削除してもよろしいですか。</p>";
 		    }
         ?>
         <p class="submit">

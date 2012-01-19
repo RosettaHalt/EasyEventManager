@@ -6,11 +6,12 @@ j(function() {
 	var page = 0;
 	var num = 10;
 	var timer;
+	var upev_tr = j('#update_event tr');
 	function draw(){
-		j('#update_event tr').hide();
+		upev_tr.hide();
 		j('#update_event tr:first, #update_event tr:gt(' + page * num + '):lt('+num+')').show();
 		j('#current_page').html(page+1);
-		j('#total_page').html(Math.floor((j('#update_event tr').size()-1)/num+1));
+		j('#total_page').html(Math.floor((upev_tr.size()-1)/num+1));
 	}
 	j('#update_event #prev').click(function(){
 		if (page > 0){
@@ -21,7 +22,7 @@ j(function() {
 	});
 
 	j('#update_event #next').click(function(){
-		if (page < (j('#update_event tr').size() - 1) / num - 1){
+		if (page < (upev_tr.size() - 1) / num - 1){
 			page++;
 			draw();
 		}
@@ -33,8 +34,8 @@ j(function() {
 	//!< selectの変更時にページング切り替え
     j('select#foo').change(function(){
         num = j(this).val();
-        if (page >= (j('#update_event tr').size() - 1) / num - 1) {
-        	page = Math.floor((j('#update_event tr').size()-1)/num+1)-1;
+        if (page >= (upev_tr.size() - 1) / num - 1) {
+        	page = Math.floor((upev_tr.size()-1)/num+1)-1;
         }
         draw();
     });
@@ -50,12 +51,13 @@ j(function() {
 	});
 
 	//!< チェックボックスを全選択
+	var chk_inp = j('#check input');
 	j('#all').click(function(){
 		if(this.checked){
-			j('#check input').attr('checked','checked');
+			chk_inp.attr('checked','checked');
 		}
 		else{
-			j('#check input').removeAttr('checked');
+			chk_inp.removeAttr('checked');
 		}
 	});
 
