@@ -60,5 +60,4 @@ j(function() {
 			chk_inp.removeAttr('checked');
 		}
 	});
-
 });

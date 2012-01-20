@@ -27,3 +27,9 @@
 #update_event th{
 	cursor: pointer;
 }
+#update_event th:hover{
+	background-color: #F1F1F1;
+    background-image: -moz-linear-gradient(center top , #F9F9F9, #ECECEC);
+	background-color: #E1E1E1;
+    background-image: -moz-linear-gradient(center top , #ECECEC, #DADADA);
+}

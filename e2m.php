@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Easy Event Manager
-Version: 0.6
+Version: 0.7.1
 Plugin URI: http://web.lugn-design.com
-Author: Rosetta
+Author: Halt
 Author URI: http://web.lugn-design.com
 Description: Easy to manage for event calendar.
 */
@@ -17,7 +17,7 @@ add_action('admin_menu', 'admin_menu_easy_manage_event');
 //!< アクションフックのコールバッック関数
 function admin_menu_easy_manage_event () {
     // 設定メニュー下にサブメニューを追加
-	add_options_page('イベント管理', 'イベント管理', 'level_8', __FILE__, 'easy_manage_event');
+	add_options_page('Event Manager', 'Event Manager', 'level_8', __FILE__, 'easy_manage_event');
 }
 
 //!< CSSの読み込み
@@ -26,15 +26,15 @@ function wp_custom_admin_Lib() {
 		$plugin_url .= "/EasyEventManager/";
 	?>
 	<link type="text/css" href="<?php echo $plugin_url; ?>css/style.css" rel="stylesheet" />
-	<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+	<link type="text/css" href="<?php echo $plugin_url; ?>css/ui-lightness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />
+	<script type="text/javascript" src="<?php echo $plugin_url; ?>js/jquery-ui-1.8.17.custom.min.js"></script>
 	<script type="text/javascript" src="<?php echo $plugin_url; ?>js/script.js"></script>
 	<script type="text/javascript" src="<?php echo $plugin_url; ?>js/sort/jquery.tablesorter.js"></script>
 	<script type="text/javascript">
 		var j = jQuery.noConflict();
 		j(function() {
 	    <?php
-			$total_event = getTotalEvent();
+			$total_event = e2m_getTotalEvent();
 
     		for($i = 0; $i < $total_event; $i++){
     			echo "j(\"#datepicker".$i."\").datepicker({dateFormat: 'yy/mm/dd'});\n";
@@ -42,16 +42,21 @@ function wp_custom_admin_Lib() {
 		?>
 			j("#changetable").tablesorter({
 			});
+			j('#tabs').tabs({
+				selected: 0,
+				fx: { opacity: 'toggle',duration: 300 }
+			});
 		});
 	</script>
 	<?php
 }
 add_action('admin_head', 'wp_custom_admin_Lib', 100);
 
-
 //!< プラグインページのコンテンツを表示
 function easy_manage_event () {
 	global $plugin_db;
+	$plugin_url = (is_ssl()) ? str_replace('http://','https://', WP_PLUGIN_URL) : WP_PLUGIN_URL;
+	$plugin_url .= "/EasyEventManager/";
 ?>
     <div class="wrap">
         <h2>Easy Event Manager</h2>
@@ -60,15 +65,24 @@ function easy_manage_event () {
 	        if ( isset($_POST['delete_event']) && isset($_POST['delete']) ) {
 	        	confirmDeleteEvent();
 		    }
-		    else{
+		    else{ 
 	        	undercard();
-	        	addEvent();
-	        	changeEvent();
-	        	deleteEvent();
-	
-	        	//showDebugData();	// デバッグ用
-        	}
-        ?>
+		    ?>
+		    	<div id="tabs">
+					<ul>
+						<li><a href="#tabs-1">Event Manager</a></li>
+						<li><a href="<?php echo $plugin_url; ?>document.html">Documentation</a></li>
+					</ul>
+					<div id="tabs-1">
+						<?php 
+				        	addEvent();
+				        	changeEvent();
+				        	deleteEvent(); 
+	        				//e2m_showDebugData();	// デバッグ用
+				        ?>
+					</div>
+				</div>
+	        <?php } ?>
     </div>
 <?php
 }
@@ -90,8 +104,8 @@ function changeEvent(){
 	<form method="post" action="options.php">
 	    <?php
 	    	wp_nonce_field('update-options');
-			$total_event = getTotalEvent();
-			$sort_data = getEventData2();
+			$total_event = e2m_getTotalEvent();
+			$sort_data = e2m_getEventData();
 	    ?>
 	    <table class="widefat" id="changetable">
 	    <thead>
@@ -152,7 +166,7 @@ function addEvent(){
 	<form method="post" action="options.php">
 	 	<?php
 	    	wp_nonce_field('update-options');
-			$total_event = getTotalEvent();
+			$total_event = e2m_getTotalEvent();
 	    ?>
 	    <h3>新規追加</h3>
 	    <table class="widefat">
@@ -197,9 +211,9 @@ function deleteEvent(){
 	<form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" style="width:200px;" >
      	<?php
         	wp_nonce_field('update-options');
-			$total_event = getTotalEvent();
-			$event_data = getEventData();
-			$sort_data = sortData();																																									
+			$total_event = e2m_getTotalEvent();
+			$event_data = e2m_getEventData2();
+			$sort_data = e2m_sortData();																																									
 			$trnum = 20;
         ?>
 	    	<div id="check">
@@ -224,7 +238,7 @@ function deleteEvent(){
         	<input type="hidden" name="action" value="update" />
 	    	<input type="hidden" name="<?php echo $plugin_db; ?>total_event" value="<?php echo $total_event; ?>" />
 	    	<input type="hidden" name="delete_event" value="delete_event" />
-            <input type="submit" class="button-primary" value="<?php _e('選択したイベントを削除') ?>" />
+            <input type="submit" class="button-primary" value="<?php _e('Delete') ?>" />
         </p>
     </form>
 	<form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" >
@@ -251,8 +265,8 @@ function confirmDeleteEvent(){
         	if ( $_POST['delete'] == "all_delete" ) {
         		echo "<p>以下のイベントを削除します。</p>";
         		$now = date('Y/m/d');
-				$total_event = getTotalEvent();
-				$data = getEventData2();
+				$total_event = e2m_getTotalEvent();
+				$data = e2m_getEventData();
 	    		for($i = 0; $i < $total_event; $i++){
 		    		$tmp = $data[$i];
 	    			if($now > $tmp["date"]){
@@ -313,7 +327,7 @@ function undercard(){
 //!< イベント削除後の順整理
 function arrangementEvent(){
 	global $plugin_db;
-	$event_data = getEventData();
+	$event_data = e2m_getEventData2();
 	$ary = array_merge($event_data);
 
     $event_cnt = 0;
@@ -335,7 +349,7 @@ if ( function_exists('register_uninstall_hook') ) {
 }
 function uninstall_hook_easy_manage_event () {
 	global $plugin_db;
-    $total_event = getTotalEvent();
+    $total_event = e2m_getTotalEvent();
 
     for($i = 0; $i < $total_event; $i++){
    		delete_option($plugin_db.'title'.$i);
@@ -346,23 +360,23 @@ function uninstall_hook_easy_manage_event () {
 }
 
 //!< 表示用関数
-function showDebugData() {
+function e2m_showDebugData(){
 	global $plugin_db;
-	$total_event = getTotalEvent();
+	$total_event = e2m_getTotalEvent();
 
 	echo "<div class=\"show_event\">";
 
 	echo "<h3>データの表示</h3>";
 
 	echo "合計イベント数 : ".$total_event;
-	$event_data = getEventData();
+	$event_data = e2m_getEventData2();
 
 	echo "<pre>";
 	print_r($event_data);
 	echo "</pre>";
 
 	echo "sorted <br />";
-	$sort_data = sortData();
+	$sort_data = e2m_sortData();
 
 	foreach ($sort_data as $key => $row) {
 	    echo $row['year'] . " : ";
@@ -379,7 +393,7 @@ function showDebugData() {
 }
 
 //!< イベントの総数を返す
-function getTotalEvent(){
+function e2m_getTotalEvent(){
 	global $plugin_db;
 
 	if(get_option($plugin_db.'total_event') != 0){
@@ -390,9 +404,9 @@ function getTotalEvent(){
 }
 
 //!< イベントの情報を配列で返す
-function getEventData(){
+function e2m_getEventData2(){
 	global $plugin_db;
-	$total_event = getTotalEvent();
+	$total_event = e2m_getTotalEvent();
 	$weekjp_array = array('日', '月', '火', '水', '木', '金', '土');
     $event_cnt = 0;
 
@@ -437,10 +451,10 @@ function getEventData(){
 }
 
 //!< イベントの情報を配列で返す
-function getEventData2(){
+function e2m_getEventData(){
 	global $plugin_db;
-	$total_event = getTotalEvent();
-	$data = getEventData();
+	$total_event = e2m_getTotalEvent();
+	$data = e2m_getEventData2();
 
 	for($i = 0; $i < $total_event; $i++){
     		$event_data[$i]["year"] = $data["year"][$i];
@@ -465,9 +479,9 @@ function addZero($value){
 }
 
 //!< 日付順にソート
-function sortData(){
+function e2m_sortData(){
 	global $plugin_db;
-	$data = getEventData2();
+	$data = e2m_getEventData();
 
 	foreach ($data as $key => $row) {
 	    $year[$key]  = $row['year'];

@@ -1,0 +1,170 @@
+<div id="poststuff">
+        <div class="postbox">
+        	<h3 class="hndle">概要</h3>
+        	<div class="inside">
+        		<p>
+        		シンプルなイベント管理を提供するプラグインです。<br />
+        		メジャーなプラグインほど高機能さは必要なく最低限 日付やタイトルが入力できれば、という人向け。<br />
+        		イベントの追加などは誰でも出来ると思いますが登録したイベントをそのままカレンダーなどで出力する機能はまだない(今後追加予定)のでテーマを編集出来る人じゃないと難しいと思います。<br />
+        		</p>
+        	</div>
+        </div>
+        <div class="postbox">
+        	<h3 class="hndle">イベントの登録方法</h3>
+        	<div class="inside">
+        		<p>全ての操作は「Event Manager」欄で操作します。</p>
+        		<dl>
+        			<dt><strong>新規追加・変更</strong></dt>
+        			<dd>「日付、タイトル、URL、その他」の欄に入力します。<br />
+        			日付の欄をクリックするとカレンダーが表示されるので任意の日付を選択して下さい。
+        			</dd>
+        			
+        			<dt><strong>イベントのソート、ページ移動、表示数の変更</strong></dt>
+        			<dd>「内容の変更」に表示されている「No、日付、タイトル、URL、その他」を押すとソートすることができます。<br />
+        			表の上に表示している「← n / m →」の矢印を押せば次のページを表示できます。<br />
+        			その際nが現在のページ番号、mが最大ページ数です。<br />
+        			またデフォルトでは10件の表示ですが値を選択すれば表示数を変更できます。
+        			</dd>
+        			
+        			<dt><strong>削除</strong></dt>
+        			<dd>削除するNo.にチェックを入れ「削除」ボタンを押して下さい。<br />
+        			対応するNo.は「内容の変更」に表示されているNo.と同じです。<br />
+        			また「期間が過ぎたイベントを全て削除」を押すと過去のイベントを全て削除します。
+        			</dd>
+        		</dl>
+        	</div>
+        </div>
+        <div class="postbox">
+        	<h3 class="hndle">主な使用方法</h3>
+        	<div class="inside">
+        		<p>テーマ中に</p>
+        		<strong>
+        		<pre>
+	$event_data = e2m_getEventData();
+	foreach ($event_data as $key => $row) {
+	    echo $row['date'] . " - ";
+	    echo $row['title'];
+	}
+        		</pre>
+        		</strong>     		
+        		<p>と記述すれば「<strong>20xx/xx/xx - tergrg</strong> 」と出力されます。<br />
+        		変数を取得した後はカレンダーに組み込んだり、リスト形式で表示するなど自由に使うことができます。<br />
+        		以下に主な仕様を記載します。</p>
+        	</div>
+        </div>
+        <div class="postbox">
+        	<h3 class="hndle">関数</h3>
+        	<div class="inside">
+        		<dl>
+        			<dt><strong>e2m_getEventData();</strong></dt>
+        			<dd>イベントの情報を配列で取得します。<br />
+        			配列にはイベントの登録順に情報が格納されています。<br />
+        			配列の詳細は下記の「オブジェクト」の欄で記載しています。
+        			</dd>
+        			<dt><strong>e2m_sortData();</strong></dt>
+        			<dd>イベントの情報を日付順でソートした配列で取得します。</dd>
+        			<dt><strong>e2m_getTotalEvent();</strong></dt>
+        			<dd>イベントの総数を返します。<br />
+        			ほとんどの場合はe2m_getEventData()で取得した配列の大きさをcount();で取得することで代用できます。</dd>
+        			<dt><strong>e2m_showDebugData();</strong></dt>
+        			<dd>イベントの配列をprint_r()形式、またソートした配列を" - "区切りの両方で出力します。<br />
+        			基本的にデバック用です。</dd>
+        		</dl>
+        	</div>
+        </div>
+        <div class="postbox">
+        	<h3 class="hndle">オブジェクト</h3>
+        	<div class="inside">
+        		<p><strong>
+					$event_data = e2m_getEventData();<br />
+					$data = $event_data[0];</strong><br /><br />
+					という変数<strong> $data</strong> を用意した場合</p>
+        		<dl>
+        			<dt><strong>$data["date"];</strong></dt>
+        			<dd>イベントの日付を取得します。<br />
+        			形式は「yy/mm/dd」です。</dd>
+        			<dt><strong>$data["title"];</strong></dt>
+        			<dd>イベントの「タイトル」を取得します。</dd>
+        			<dt><strong>$data["url"];</strong></dt>
+        			<dd>イベントの「URL」を取得します。</dd>
+        			<dt><strong>$data["other"];</strong></dt>
+        			<dd>イベントの「その他」を取得します。<br />
+        			その他にはメモやカテゴリーなどお好きな用途でお使い下さい。</dd>
+        			<dt><strong>$data["year"];</strong></dt>
+        			<dd>イベントの「年」を取得します。<br />
+        			形式は「yy」です。</dd>
+        			<dt><strong>$data["month"];</strong></dt>
+        			<dd>イベントの「月」を取得します。<br />
+        			形式は「mm」です。</dd>
+        			<dt><strong>$data["days"];</strong></dt>
+        			<dd>イベントの「日」を取得します。<br />
+        			形式は「dd」です。</dd>
+        			<dt><strong>$data["week"];</strong></dt>
+        			<dd>イベントの「曜日」を取得します。</dd>
+        		</dl>
+        		<p>仮に上記の$event_dataという変数をprint_r($event_data);で表示すると</p>
+        		<pre>
+	Array
+	(
+	    [year] => Array
+	        (
+	            [0] => 2012
+	            [1] => 2013
+	            [2] => 2014
+	        )
+	
+	    [month] => Array
+	        (
+	            [0] => 01
+	            [1] => 04
+	            [2] => 11
+	        )
+	
+	    [days] => Array
+	        (
+	            [0] => 01
+	            [1] => 11
+	            [2] => 08
+	        )
+	
+	    [week] => Array
+	        (
+	            [0] => 日
+	            [1] => 木
+	            [2] => 土
+	        )
+	
+	    [title] => Array
+	        (
+	            [0] => たいとる
+	            [1] => タイトル！
+	            [2] => イベントのタイトルです。
+	        )
+	
+	    [url] => Array
+	        (
+	            [0] => http://google.com
+	            [1] => http://wordpress.org
+	            [2] => http://web.lugn-design.com
+	        )
+	
+	    [other] => Array
+	        (
+	            [0] => メモとか
+	            [1] => カテゴリーとか
+	            [2] => 好きに使って下さい。
+	        )
+	
+	    [date] => Array
+	        (
+	            [0] => 2012/01/01
+	            [1] => 2013/04/11
+	            [2] => 2014/11/08
+	        )
+	)
+        		</pre>
+        		<p>となります。</p>
+        		</p>
+        	</div>
+        </div>        
+    </div>
