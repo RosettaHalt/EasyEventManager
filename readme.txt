@@ -5,7 +5,7 @@ Donate link: http://web.lugn-design.com/
 Tags: calendar, event, event calendar, event management, event registration, events, events calendar, manage, manager, easy, easy event, simple, simple event
 Requires at least: 3.0.0
 Tested up to: 3.3.1
-Stable tag: 0.7.1
+Stable tag: 0.8.1
 
 Easy to manage for event calendar.
 
@@ -23,13 +23,16 @@ Easy to manage for event calendar.<br />
 DashBoard -> 設定 -> Event Manager -> Documentation<br />
 に記載してあります。<br />
 もしくはプラグインのページを参照<br />
-http://goo.gl/xxZCE
+http://web.lugn-design.com/easy-event-manager/
 
 
 == Frequently Asked Questions ==
  
 
 == Changelog ==
+
+= 0.8 =
+リスト形式とカレンダー形式での表示を追加しました。
 
 = 0.7 =
 公開
@@ -38,7 +41,9 @@ http://goo.gl/xxZCE
  
 
 == Arbitrary section ==
-テンプレート内で
+ウィジェットからカレンダー形式とリスト形式を選んで表示できます。
+
+またテンプレート内で
 `
 $event_data = e2m_getEventData();
 $data = $event_data[0];
@@ -64,7 +69,7 @@ for($i = 0; $i < $total_event; $i++){
 DashBoard -> 設定 -> Event Manager -> Documentation<br />
 に記載してあります。<br />
 もしくはプラグインのページを参照<br />
-http://goo.gl/xxZCE
+http://web.lugn-design.com/easy-event-manager/
 
 <br />
 今後のこと<br />
@@ -72,7 +77,4 @@ http://goo.gl/xxZCE
 <br />
 実装予定<br />
 独立したカテゴリ機能(検討中)<br />
-カレンダー形式での出力<br />
-リスト形式での出力<br />
 出力時のタグをユーザーが選べるようにする(検討中)<br />
-カテゴリー機能の追加(検討中)

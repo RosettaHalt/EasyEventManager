@@ -511,7 +511,7 @@ function e2m_showList($num, $same_month) {
 			$itr++;
 		}
 		if($view == 0){
-			echo "<li><span class=\"e2m_date\">". $row['date'] ."/". $row['week'] ."</span> <a class=\"e2m_link\" href=\"".$row['url']."\">".$row['title']."</a></li>";
+			echo "<li><span class=\"e2m_date\">". $row['date'] ."/". $row['week'] ."</span> - <a class=\"e2m_link\" href=\"".$row['url']."\">".$row['title']."</a></li>";
 		}
 		
 			//!< 最大数よりもループ数が多くなったらbreak
