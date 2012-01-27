@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Easy Event Manager
-Version: 0.7.1
+Version: 0.8
 Plugin URI: http://web.lugn-design.com
 Author: Halt
 Author URI: http://web.lugn-design.com
@@ -51,6 +51,16 @@ function wp_custom_admin_Lib() {
 	<?php
 }
 add_action('admin_head', 'wp_custom_admin_Lib', 100);
+
+add_action('wp_head', 'header_css_style');
+
+function header_css_style(){ 
+	$plugin_url = (is_ssl()) ? str_replace('http://','https://', WP_PLUGIN_URL) : WP_PLUGIN_URL;
+	$plugin_url .= "/EasyEventManager/";
+		?>
+	<link type="text/css" href="<?php echo $plugin_url; ?>css/calendar.css" rel="stylesheet" />
+	<?php
+}
 
 //!< プラグインページのコンテンツを表示
 function easy_manage_event () {
@@ -470,10 +480,104 @@ function e2m_getEventData(){
     return $event_data;
 }
 
+//!< 表示用関数
+//!< リスト形式
+function e2m_showList() {
+	$data = e2m_sortData();
+	foreach ($data as $key => $row) {
+		echo "<li><span class=\"e2m_date\">". $row['date'] ."/". $row['week'] ."</span> <a class=\"e2m_link\" href=\"".$row['url']."\">".$row['title']."</a></li>";
+	}
+}
+
+//!< カレンダー形式
+function e2m_showCalendar() {
+	$plugin_url = (is_ssl()) ? str_replace('http://','https://', WP_PLUGIN_URL) : WP_PLUGIN_URL;
+	$plugin_url .= "/EasyEventManager/";
+	$sort_data = e2m_sortData();
+	?>
+	<script type="text/javascript" src="<?php echo $plugin_url; ?>js/eventcalender.js"></script>
+	<?php e2m_cal(); ?>
+    <script type="text/javascript">
+    var year = 200;
+    var month = 10;
+    var e2m_data = [
+    	<?php 
+    	$js_data = array();
+    	foreach ($sort_data as $key => $value) {
+    		$js_data[] = "['".$value["title"]."', ".$value["year"].", ".deleteZero($value["month"]).", ".deleteZero($value["days"]).", '".$value["date"]."', '".$value["url"]."'],"; 
+    	}
+    	$js_num = count($js_data)-1;
+    	$js_data[$js_num] = rtrim($js_data[$js_num], ",");
+    	foreach ($js_data as $key => $value) {
+    		echo $value;
+    	}
+    	?>
+    ];
+    //!< 登録した日付をカレンダーに表示していく
+    function e2m_setEvent(year,month){
+    	if(cal_flag == true){
+    		var data_num = <?php echo e2m_getTotalEvent(); ?>;
+    		for (var i = 0; i < data_num; i++) {
+    			<?php $data = $sort_data[$i++]; ?>
+    			var tgt_title = e2m_data[i][0];
+				var tgt_date = e2m_data[i][4];
+				var tgt_url = e2m_data[i][5];
+				var tgt_year = e2m_data[i][1];
+				var tgt_month = e2m_data[i][2];
+				var tgt_day = e2m_data[i][3];
+    			if(year == tgt_year){
+					if(month == tgt_month){
+						 j("#e2m_event_cal span").eq(tgt_day-1).replaceWith(function() {
+						 	return "<a href=\""+tgt_url+"\" title=\""+tgt_title+"\">"+tgt_day+"</a>"
+						 });
+					}
+				}
+    		}
+    	}
+    	cal_flag = false;
+    }
+    </script>
+	<?php
+}
+
+//!< カレンダーテンプレート
+function e2m_cal(){
+$data = <<< END
+<div class="e2m_calender">
+    <p class="cal_year">20xx年</p>
+    <ul class="month cf">
+        <li class="prevmonth"><a href=""> &lt;&lt;x月 </a></li>
+        <li class="currentmonth">x月</li>
+        <li class="nextmonth"><a href=""> x月 &gt;&gt; </a></li>
+    </ul>
+    <ul class="week cf">
+        <li class="holiday">SUN</li>
+        <li>MON</li>
+        <li>TUE</li>
+        <li>WED</li>
+        <li>THU</li>
+        <li>FRI</li>
+        <li class="holiday">SAT</li>
+    </ul>
+    <div class="day cf">
+    	<table id="e2m_event_cal">
+		</table>
+	</div>
+</div>
+END;
+echo $data;
+}
+
 //!< 10未満の文字に0を追加する
 function addZero($value){
 	if($value < 10){
 		$value = "0".$value;
+	}
+	return $value;
+}
+function deleteZero($value){
+	if($value == "00" || $value == "01" || $value == "02" || $value == "03" || $value == "04" || $value == "05" || $value == "06" || $value == "07" || $value == "08" || $value == "09"){
+		$value = str_replace("0", "", $value);
 	}
 	return $value;
 }

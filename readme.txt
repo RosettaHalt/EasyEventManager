@@ -19,6 +19,12 @@ Easy to manage for event calendar.<br />
 2. Activate the plugin through the ‘Plugins’ menu in WordPress
 3. Place add code in your templates. Please refer to "Arbitrary section" or "DashBoard -> Event Manager -> Documentation".
 
+詳しくは<br />
+DashBoard -> 設定 -> Event Manager -> Documentation<br />
+に記載してあります。<br />
+もしくはプラグインのページを参照<br />
+http://goo.gl/xxZCE
+
 
 == Frequently Asked Questions ==
  
@@ -40,16 +46,25 @@ $data = $event_data[0];
 
 とするとイベントのデータを取得できます。<br />
 それぞれ整数、多重配列の型になっています。<br />
-`for($i = 0; $i < $total_event; $i++){ $title_value[$i] = $event_data["title"][$i]; }`
+`
+for($i = 0; $i < $total_event; $i++){
+	$title_value[$i] = $event_data["title"][$i];
+}
+`
 などのようにループで処理すれば登録したデータを取得することができます。<br />
 後はカレンダーに組み込んだり、リスト形式で表示するなど自由に使うことができます。<br />
 
-今現在は
-以上の配列値を取得できます。<br />
+今現在、取得できる情報は年、月、日、曜日、日付(yy/mm/dd形式)、タイトル、URL、その他(自由欄)です。<br />
 
 デバックなどで配列の中身を見たい時は
 `e2m_showDebugData();`
 を呼べば中身をprint_r()で表示することが出来ます。<br />
+
+詳しくは<br />
+DashBoard -> 設定 -> Event Manager -> Documentation<br />
+に記載してあります。<br />
+もしくはプラグインのページを参照<br />
+http://goo.gl/xxZCE
 
 <br />
 今後のこと<br />
