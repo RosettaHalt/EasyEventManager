@@ -14,6 +14,7 @@
 .e2m_calender .month{
 	margin: 0;
 	padding: 0;
+	margin:0px 4px 0px 4px;
 }
 .e2m_calender .month li{
 	float: left;
@@ -47,6 +48,7 @@
 .e2m_calender .week{
 	margin: 0;
 	padding: 0;
+	margin:0px 0px 0px 8px;
 }
 .e2m_calender .week li{
 	float: left;

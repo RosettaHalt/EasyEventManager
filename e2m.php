@@ -584,12 +584,12 @@ function e2m_cal(){
 $data = <<< END
 <div class="e2m_calender">
     <p class="cal_year">20xx年</p>
-    <ul style="margin:0px 4px 0px 4px; padding:0px;" class="month cf">
+    <ul class="month cf">
         <li class="prevmonth"><a href=""> &lt;&lt;x月 </a></li>
         <li class="currentmonth">x月</li>
         <li class="nextmonth"><a href=""> x月 &gt;&gt; </a></li>
     </ul>
-    <ul style="margin:0px 0px 0px 8px; padding:0px;" class="week cf">
+    <ul class="week cf">
         <li class="holiday">SUN</li>
         <li>MON</li>
         <li>TUE</li>
