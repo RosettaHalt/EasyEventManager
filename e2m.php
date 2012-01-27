@@ -482,10 +482,42 @@ function e2m_getEventData(){
 
 //!< 表示用関数
 //!< リスト形式
-function e2m_showList() {
+function e2m_showList($num, $same_month) {
 	$data = e2m_sortData();
-	foreach ($data as $key => $row) {
-		echo "<li><span class=\"e2m_date\">". $row['date'] ."/". $row['week'] ."</span> <a class=\"e2m_link\" href=\"".$row['url']."\">".$row['title']."</a></li>";
+	$total_event = e2m_getTotalEvent();
+	
+	$year = date("Y");
+	$month = date("m");
+	$day = date("d");
+	
+	$loop = $total_event;
+	if($num > 0){
+		$loop = $num;
+	}
+	
+	for ($i = 0,$itr = 0; $itr < $loop; $i++) {
+		$view = 1;
+		$row = $data[$i];
+		if($same_month == true){
+			if($year == $row["year"]){
+				if($month == $row["month"]){
+					$itr++;
+					$view = 0;
+				}
+			}
+		}
+		else{
+			$view = 0;
+			$itr++;
+		}
+		if($view == 0){
+			echo "<li><span class=\"e2m_date\">". $row['date'] ."/". $row['week'] ."</span> <a class=\"e2m_link\" href=\"".$row['url']."\">".$row['title']."</a></li>";
+		}
+		
+			//!< 最大数よりもループ数が多くなったらbreak
+		if($total_event <= $i+1){
+			break;
+		}
 	}
 }
 
@@ -609,10 +641,11 @@ function e2m_sortData(){
 	return $data;
 }
 
-class e2mWidget extends WP_Widget {
+//!< カレンダー形式のウィジェット
+class e2mCalendarWidget extends WP_Widget {
     /** constructor */
-    function e2mWidget() {
-        parent::WP_Widget(false, $name = 'e2mWidget');	
+    function e2mCalendarWidget() {
+        parent::WP_Widget(false, $name = 'e2mCalendarWidget');	
     }
 
     /** @see WP_Widget::widget */
@@ -644,6 +677,56 @@ class e2mWidget extends WP_Widget {
     function e2m_showcal(){
     }
 
-} // class e2mWidget
-add_action('widgets_init', create_function('', 'return register_widget("e2mWidget");'));
+} // class e2mCalendarWidget
+add_action('widgets_init', create_function('', 'return register_widget("e2mCalendarWidget");'));
+
+//!< リスト形式のウィジェット
+class e2mListWidget extends WP_Widget {
+    /** constructor */
+    function e2mListWidget() {
+        parent::WP_Widget(false, $name = 'e2mListWidget');	
+    }
+
+    /** @see WP_Widget::widget */
+    function widget($args, $instance) {		
+        extract( $args );
+        $title = apply_filters('widget_title', $instance['title']);
+        $num = apply_filters('widget_title', $instance['num']);
+        $same_month = apply_filters('widget_title', $instance['same_month']);
+        ?>
+              <?php echo $before_widget; ?>
+                  <?php if ( $title )
+                        echo $before_title . $title . $after_title; ?>
+                        <ul>
+                  <?php e2m_showList($num, $same_month); ?>
+                  		</ul>
+              <?php echo $after_widget; ?>
+        <?php
+    }
+
+    /** @see WP_Widget::update */
+    function update($new_instance, $old_instance) {				
+        return $new_instance;
+    }
+
+    /** @see WP_Widget::form */
+    function form($instance) {				
+        $title = esc_attr($instance['title']);
+        $num = esc_attr($instance['num']);
+        $same_month = esc_attr($instance['same_month']);
+        if($same_month == true){
+        	$checked = "checked=\"checked\"";
+        }
+        ?>
+            <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></label></p>
+            <p><label for="<?php echo $this->get_field_id('num'); ?>"><?php _e('表示数:'); ?> <input class="widefat" id="<?php echo $this->get_field_id('num'); ?>" name="<?php echo $this->get_field_name('num'); ?>" type="text" value="<?php echo $num; ?>" /></label></p>
+            <p><label for="<?php echo $this->get_field_id('same_month'); ?>"><?php _e('現在の月のみ:'); ?> <input id="<?php echo $this->get_field_id('same_month'); ?>" name="<?php echo $this->get_field_name('same_month'); ?>" type="checkbox" <?php echo $checked; ?> value="1" /></label></p>
+        <?php 
+    }
+    
+    function e2m_showcal(){
+    }
+
+} // class e2mListWidget
+add_action('widgets_init', create_function('', 'return register_widget("e2mListWidget");'));
 ?>
