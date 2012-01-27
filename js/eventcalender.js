@@ -18,7 +18,7 @@ function e2m_cal(year,month,day) {
 	 var week=Math.floor((year*365.2425+days)%7);
 	 var j=0;
 	 var when=year+"年 "+(month+1)+"月";
-	 var aki = 0;
+	 aki = 0;
 	 var cnt = 0;
 	 for (i=0; i < week; i++,j++) {
 	 	aki++;

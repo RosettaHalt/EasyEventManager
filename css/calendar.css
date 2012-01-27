@@ -12,6 +12,8 @@
 	margin-bottom: 5px;
 }
 .e2m_calender .month{
+	margin: 0;
+	padding: 0;
 }
 .e2m_calender .month li{
 	float: left;
@@ -19,6 +21,9 @@
 	height:20px;
 	text-align: center;
 	list-style: none;
+	font-size:13px;
+	margin: 0;
+	padding: 0;
 }
 .e2m_calender .month .prevmonth{
 	text-align: left;
@@ -27,7 +32,7 @@
 	text-align: center;;
 }
 .e2m_calender .month .nextmonth{
-	text-align: right;
+	float: right;
 }
 .e2m_calender .month li a{
 	color: #3C3C3D;
@@ -39,6 +44,8 @@
 }
 
 .e2m_calender .week{
+	margin: 0;
+	padding: 0;
 }
 .e2m_calender .week li{
 	float: left;
@@ -46,6 +53,8 @@
 	color: #999999;
 	text-align: center;
 	font-size: 10px;
+	margin: 0;
+	padding: 0;
 }
 .e2m_calender .week li.holiday{
 	color: #666767;
@@ -58,26 +67,37 @@
 	list-style: none;
 }
 .e2m_calender .day{
+	margin: 0;
+	padding: 0;
 }
 .e2m_calender .day{
-	border-top: 1px solid #333;
-	border-left: 1px solid #333;
+}
+.e2m_calender .day table{
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
 }
 .e2m_calender .day td{
 	float: left;
 	width: 19px;
 	height:20px;
-	background-color: #F2F2F2;
-	padding: 5px;
+	background-color: #EEE;
+	padding: 2px 5px 7px 5px;
 	text-align: center;
 	
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 15px;
-	border-bottom: 1px solid #333;
-	border-right: 1px solid #333;
+	border-radius: 8px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	margin-bottom: 1px;
+	margin-right: 1px;
 }
 .e2m_calender .day td.holiday{
-	background-color: #E5E5E4;
+	background-color: #E0E0E0;
+}
+.e2m_calender .day td.event_day{
+	background-color: #eeeeff;
 }
 .e2m_calender .day td span{
 	width: 50px;

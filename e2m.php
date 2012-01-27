@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Easy Event Manager
-Version: 0.8
+Version: 0.8.1
 Plugin URI: http://web.lugn-design.com
 Author: Halt
 Author URI: http://web.lugn-design.com
@@ -500,6 +500,7 @@ function e2m_showCalendar() {
     <script type="text/javascript">
     var year = 200;
     var month = 10;
+    var aki = 0;
     var e2m_data = [
     	<?php 
     	$js_data = array();
@@ -518,18 +519,25 @@ function e2m_showCalendar() {
     	if(cal_flag == true){
     		var data_num = <?php echo e2m_getTotalEvent(); ?>;
     		for (var i = 0; i < data_num; i++) {
-    			<?php $data = $sort_data[$i++]; ?>
     			var tgt_title = e2m_data[i][0];
 				var tgt_date = e2m_data[i][4];
 				var tgt_url = e2m_data[i][5];
 				var tgt_year = e2m_data[i][1];
 				var tgt_month = e2m_data[i][2];
 				var tgt_day = e2m_data[i][3];
+				//j("#e2m_event_cal td").removeClass("event_day");
     			if(year == tgt_year){
 					if(month == tgt_month){
-						 j("#e2m_event_cal span").eq(tgt_day-1).replaceWith(function() {
-						 	return "<a href=\""+tgt_url+"\" title=\""+tgt_title+"\">"+tgt_day+"</a>"
+						 j("#e2m_event_cal span").eq(tgt_day-1).html(function() {
+						 	if(tgt_url == ""){
+						 		return "<string>"+tgt_day+"</string>"
+						 	}
+						 	else{
+						 		return "<a href=\""+tgt_url+"\" title=\""+tgt_title+"\">"+tgt_day+"</a>"
+						 	}
 						 });
+						 j("#e2m_event_cal span").eq(tgt_day-1).parent("td").addClass("event_day");
+						 alert(i + " : " +tgt_day+" : "+aki);
 					}
 				}
     		}
@@ -545,12 +553,12 @@ function e2m_cal(){
 $data = <<< END
 <div class="e2m_calender">
     <p class="cal_year">20xx年</p>
-    <ul class="month cf">
+    <ul style="margin:0px; padding:0px;" class="month cf">
         <li class="prevmonth"><a href=""> &lt;&lt;x月 </a></li>
         <li class="currentmonth">x月</li>
         <li class="nextmonth"><a href=""> x月 &gt;&gt; </a></li>
     </ul>
-    <ul class="week cf">
+    <ul style="margin:0px; padding:0px;" class="week cf">
         <li class="holiday">SUN</li>
         <li>MON</li>
         <li>TUE</li>
@@ -601,4 +609,42 @@ function e2m_sortData(){
 	array_multisort($date, SORT_ASC, $title, SORT_ASC, $data);
 	return $data;
 }
+
+class e2mWidget extends WP_Widget {
+    /** constructor */
+    function e2mWidget() {
+        parent::WP_Widget(false, $name = 'e2mWidget');	
+    }
+
+    /** @see WP_Widget::widget */
+    function widget($args, $instance) {		
+        extract( $args );
+        $title = apply_filters('widget_title', $instance['title']);
+        ?>
+              <?php echo $before_widget; ?>
+                  <?php if ( $title )
+                        echo $before_title . $title . $after_title; ?>
+                  <?php e2m_showCalendar(); ?>
+              <?php echo $after_widget; ?>
+        <?php
+    }
+
+    /** @see WP_Widget::update */
+    function update($new_instance, $old_instance) {				
+        return $new_instance;
+    }
+
+    /** @see WP_Widget::form */
+    function form($instance) {				
+        $title = esc_attr($instance['title']);
+        ?>
+            <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></label></p>
+        <?php 
+    }
+    
+    function e2m_showcal(){
+    }
+
+} // class e2mWidget
+add_action('widgets_init', create_function('', 'return register_widget("e2mWidget");'));
 ?>
