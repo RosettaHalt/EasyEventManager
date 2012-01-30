@@ -5,7 +5,7 @@ Donate link: http://web.lugn-design.com/
 Tags: calendar, event, event calendar, event management, event registration, events, events calendar, manage, manager, easy, easy event, simple, simple event
 Requires at least: 3.0.0
 Tested up to: 3.3.1
-Stable tag: 0.8.1
+Stable tag: 0.8.2
 
 Easy to manage for event calendar.
 
@@ -30,6 +30,9 @@ http://web.lugn-design.com/easy-event-manager/
  
 
 == Changelog ==
+
+= 0.8.2 =
+ドキュメントのリンク切れを修正
 
 = 0.8 =
 リスト形式とカレンダー形式での表示を追加しました。

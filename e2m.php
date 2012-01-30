@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Easy Event Manager
-Version: 0.8.1
-Plugin URI: http://web.lugn-design.com
+Version: 0.8.2
+Plugin URI: http://web.lugn-design.com/easy-event-manager/
 Author: Halt
 Author URI: http://web.lugn-design.com
 Description: Easy to manage for event calendar.
@@ -23,7 +23,7 @@ function admin_menu_easy_manage_event () {
 //!< CSSの読み込み
 function wp_custom_admin_Lib() {
 		$plugin_url = (is_ssl()) ? str_replace('http://','https://', WP_PLUGIN_URL) : WP_PLUGIN_URL;
-		$plugin_url .= "/EasyEventManager/";
+		$plugin_url .= "/easy-event-manager/";
 	?>
 	<link type="text/css" href="<?php echo $plugin_url; ?>css/style.css" rel="stylesheet" />
 	<link type="text/css" href="<?php echo $plugin_url; ?>css/ui-lightness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />
@@ -56,7 +56,7 @@ add_action('wp_head', 'header_css_style');
 
 function header_css_style(){ 
 	$plugin_url = (is_ssl()) ? str_replace('http://','https://', WP_PLUGIN_URL) : WP_PLUGIN_URL;
-	$plugin_url .= "/EasyEventManager/";
+	$plugin_url .= "/easy-event-manager/";
 		?>
 	<link type="text/css" href="<?php echo $plugin_url; ?>css/calendar.css" rel="stylesheet" />
 	<?php
@@ -66,7 +66,7 @@ function header_css_style(){
 function easy_manage_event () {
 	global $plugin_db;
 	$plugin_url = (is_ssl()) ? str_replace('http://','https://', WP_PLUGIN_URL) : WP_PLUGIN_URL;
-	$plugin_url .= "/EasyEventManager/";
+	$plugin_url .= "/easy-event-manager/";
 ?>
     <div class="wrap">
         <h2>Easy Event Manager</h2>
@@ -524,7 +524,7 @@ function e2m_showList($num, $same_month) {
 //!< カレンダー形式
 function e2m_showCalendar() {
 	$plugin_url = (is_ssl()) ? str_replace('http://','https://', WP_PLUGIN_URL) : WP_PLUGIN_URL;
-	$plugin_url .= "/EasyEventManager/";
+	$plugin_url .= "/easy-event-manager/";
 	$sort_data = e2m_sortData();
 	?>
 	<script type="text/javascript" src="<?php echo $plugin_url; ?>js/eventcalender.js"></script>

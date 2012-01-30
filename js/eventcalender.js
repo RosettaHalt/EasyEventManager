@@ -65,14 +65,6 @@ function e2m_cal(year,month,day) {
 			j=0;
 		}
 	 }
-	 /*for (i=0; i < 42-(aki+cnt); i++) {
-	 	if(i == (42-(aki+cnt)-1) ){
-	 		calendar+="<td class=\"holiday\"></td>\n";
-	 	}
-	 	else{
-	 		calendar+="<td class=\"no\"></td>\n";
-	 	}	
-	 }*/
 	 calendar+="</table>";
 	 return calendar;
 }
@@ -91,7 +83,7 @@ j(function() {
 	adjustmentMonth();
 
 	//!< 前後の月をクリックした時の動作
-	j(".nextmonth").click(function(){
+	j(".e2m_calender .nextmonth").click(function(){
 		month = plusMonth(month);
 		adjustmentMonth();
 		cal_flag = true;
@@ -101,7 +93,7 @@ j(function() {
 		e2m_setEvent(year,month);
 		return false;
      })
-     j(".prevmonth").click(function(){
+     j(".e2m_calender .prevmonth").click(function(){
 		month = minusMonth(month);
 		adjustmentMonth();
 		cal_flag = true;
@@ -138,8 +130,8 @@ function adjustmentMonth(){
 	if(next_month > 12){
 		next_month = 1;
 	}
-	j(".month .prevmonth").html("<a href=\"\">&lt;&lt;" + prev_month + "月</a>");
-	j(".month .currentmonth").html(month + "月");
-	j(".month .nextmonth").html("<a href=\"\">" + next_month + "月&gt;&gt;</a>");
+	j(".e2m_calender .month .prevmonth").html("<a href=\"\">&lt;&lt;" + prev_month + "月</a>");
+	j(".e2m_calender .month .currentmonth").html(month + "月");
+	j(".e2m_calender .month .nextmonth").html("<a href=\"\">" + next_month + "月&gt;&gt;</a>");
 	j(".e2m_calender .cal_year").html("<p class=\"cal_year\">"+year+"年</p>");
 }
