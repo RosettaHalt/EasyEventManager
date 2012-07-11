@@ -54,7 +54,7 @@ add_action('admin_head', 'wp_custom_admin_Lib', 100);
 
 add_action('wp_head', 'header_css_style');
 
-function header_css_style(){ 
+function header_css_style(){
 	$plugin_url = (is_ssl()) ? str_replace('http://','https://', WP_PLUGIN_URL) : WP_PLUGIN_URL;
 	$plugin_url .= "/easy-event-manager/";
 		?>
@@ -137,7 +137,7 @@ function changeEvent(){
 			    $date_value = $data["date"];
 		    ?>
 	        <tr class="thead" valign="top">
-	            <td scope="row"><?php echo addZero($i); ?> : </th>
+	            <td scope="row"><?php echo addZero($i); ?> : </td>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>date<?php echo $i; ?>" value="<?php echo $date_value; ?>" id="datepicker<?php echo $i; ?>" /><span><?php echo $date_value; ?></span></td>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>title<?php echo $i; ?>" value="<?php echo $title_value; ?>" /><span><?php echo $title_value; ?></span></td>
 	            <td><input class="text_input" type="text" name="<?php echo $plugin_db; ?>url<?php echo $i; ?>" value="<?php echo $url_value; ?>" /><span><?php echo $url_value; ?></span></td>
@@ -223,7 +223,7 @@ function deleteEvent(){
         	wp_nonce_field('update-options');
 			$total_event = e2m_getTotalEvent();
 			$event_data = e2m_getEventData2();
-			$sort_data = e2m_sortData();																																									
+			$sort_data = e2m_sortData();
 			$trnum = 20;
         ?>
 	    	<div id="check">
@@ -303,7 +303,7 @@ function confirmDeleteEvent(){
             <input type="submit" class="button-primary" value="<?php _e('Delete') ?>" />
         </p>
     </form>
-    </div>
+	</div>
 <?php
 }
 
